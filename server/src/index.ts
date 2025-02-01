@@ -3,9 +3,9 @@ import fastify from 'fastify'
 const server = fastify({
 	logger: {
 		transport: {
-			target: "@fastify/one-line-logger"
-		}
-	}
+			target: '@fastify/one-line-logger',
+		},
+	},
 })
 
 server.get('/ping', async (request, reply) => {
