@@ -1,0 +1,22 @@
+{
+	"name": "server",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/index.ts",
+	"type": "module",
+	"scripts": {
+		"dev": "tsx src/index.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@types/node": "^22.13.0",
+		"dotenv": "^16.4.7",
+		"fastify": "^5.2.1",
+		"tsx": "^4.19.2"
+	},
+	"devDependencies": {
+		"@tsconfig/node23": "^23.0.0"
+	}
+}
