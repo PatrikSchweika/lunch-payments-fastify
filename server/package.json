@@ -6,6 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
+		"build": "tsc --outDir dist",
 		"lint": "biome check"
 	},
 	"keywords": [],

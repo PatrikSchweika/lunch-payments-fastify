@@ -8,6 +8,7 @@
 	"scripts": {
 		"format": "biome check --write",
 		"lint": "biome check",
+		"build": "pnpm -r build",
 		"dev": "pnpm -r dev",
 		"kill": "kill-port 5173 & kill-port 8080"
 	},
