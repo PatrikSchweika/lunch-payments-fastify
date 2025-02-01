@@ -5,12 +5,14 @@
 	"main": "src/index.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx src/index.ts"
+		"dev": "tsx watch src/index.ts",
+		"lint": "biome check"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@fastify/one-line-logger": "^2.0.2",
 		"@types/node": "^22.13.0",
 		"dotenv": "^16.4.7",
 		"fastify": "^5.2.1",
