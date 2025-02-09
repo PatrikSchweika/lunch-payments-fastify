@@ -1,4 +1,7 @@
 {
 	"extends": "@tsconfig/node23/tsconfig.json",
-	"include": ["src/**.ts"]
+//	"compilerOptions": {
+//		"strict": true
+//	},
+	"include": ["src"]
 }

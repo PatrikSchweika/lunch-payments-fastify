@@ -1,10 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
-import { Contract } from 'contracts/src/contract.ts'
+import type { User } from 'contracts/src/models/user.ts'
+
+const fetchUsers = async () => {
+	return await fetch('api/users')
+		.then((res) => res.text())
+		.then((res) => JSON.parse(res) as User[])
+}
 
 const usePing = () =>
 	useQuery({
 		queryKey: ['users'],
-		queryFn: () => fetch('api/users').then((res) => res.text()),
+		queryFn: fetchUsers,
 	})
 
 export const Welcome = () => {
@@ -12,8 +18,7 @@ export const Welcome = () => {
 
 	return (
 		<>
-			<div>Welcome: {data}</div>
-			<div>Contract: {Contract.a}</div>
+			<div>Welcome: {data?.map((user) => user.name).join(', ')}</div>
 		</>
 	)
 }

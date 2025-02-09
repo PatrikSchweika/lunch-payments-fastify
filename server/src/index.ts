@@ -9,13 +9,8 @@ import {
 	validatorCompiler,
 } from 'fastify-type-provider-zod'
 
-import { Contract } from 'contracts/src/contract.js'
 import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/user-router.js'
-
-const a = Contract.a
-
-console.log(a)
 
 const app = fastify({
 	logger: {

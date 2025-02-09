@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
   "devDependencies": {
     "@tsconfig/node23": "^23.0.0"
   }
