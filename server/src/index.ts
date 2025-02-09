@@ -1,6 +1,23 @@
+import path from 'node:path'
+import fastifyStatic from '@fastify/static'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUI from '@fastify/swagger-ui'
 import fastify from 'fastify'
+import {
+	jsonSchemaTransform,
+	serializerCompiler,
+	validatorCompiler,
+} from 'fastify-type-provider-zod'
 
-const server = fastify({
+import { APP_CONFIG, Environment } from './configuration/app-config.js'
+import { userRouter } from './routes/user-router.js'
+import {Contract} from "contracts/src/contract.js";
+
+const a = Contract.a
+
+console.log(a)
+
+const app = fastify({
 	logger: {
 		transport: {
 			target: '@fastify/one-line-logger',
@@ -8,11 +25,49 @@ const server = fastify({
 	},
 })
 
-server.get('/ping', async (request, reply) => {
-	return 'pong'
+app.setValidatorCompiler(validatorCompiler)
+app.setSerializerCompiler(serializerCompiler)
+
+app.register(fastifySwagger, {
+	openapi: {
+		info: {
+			title: 'FastifyApi',
+			description: 'Fastify backend service',
+			version: '1.0.0',
+		},
+		servers: [],
+	},
+	transform: jsonSchemaTransform,
 })
 
-server.listen({ port: 8080 }, (err, address) => {
+app.register(fastifySwaggerUI, {
+	routePrefix: '/documentation',
+})
+
+app.register(userRouter)
+
+if (APP_CONFIG.environment === Environment.Production) {
+	app.register(fastifyStatic, {
+		root: path.join(path.resolve(), 'public'),
+	})
+
+	app.get('/', (_, reply) => {
+		// todo: require login
+
+		return reply.sendFile('index.html')
+	})
+} else {
+	app.get('/*', (request, reply) => {
+		// todo: path does not start with api
+		// todo: require login
+
+		return reply.redirect(
+			`${request.protocol}://${request.hostname}:5173${request.originalUrl}`,
+		)
+	})
+}
+
+app.listen({ port: APP_CONFIG.port }, (err, address) => {
 	if (err) {
 		console.error(err)
 		process.exit(1)
