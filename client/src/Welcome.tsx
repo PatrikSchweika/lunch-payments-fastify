@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import {Contract} from "contracts/src/contract.ts";
+import { Contract } from 'contracts/src/contract.ts'
 
 const usePing = () =>
 	useQuery({

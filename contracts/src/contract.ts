@@ -1,4 +1,3 @@
-
 export const Contract = {
-    a: 'a'
+	a: 'a',
 }

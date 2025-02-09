@@ -9,9 +9,9 @@ import {
 	validatorCompiler,
 } from 'fastify-type-provider-zod'
 
+import { Contract } from 'contracts/src/contract.js'
 import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/user-router.js'
-import {Contract} from "contracts/src/contract.js";
 
 const a = Contract.a
 

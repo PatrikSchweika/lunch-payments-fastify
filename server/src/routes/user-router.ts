@@ -51,7 +51,7 @@ export const userRouter: FastifyPluginCallback = (fastify, _, done) => {
 			}),
 			response: {
 				204: z.void(),
-                404: z.void(),
+				404: z.void(),
 			},
 			tags: ['User'],
 			summary: 'Delete user',
