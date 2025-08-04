@@ -16,9 +16,5 @@ const usePing = () =>
 export const Welcome = () => {
 	const { data } = usePing()
 
-	return (
-		<>
-			<div>Welcome: {data?.map((user) => user.name).join(', ')}</div>
-		</>
-	)
+	return <div>Welcome: {data?.map((user) => user.name).join(', ')}</div>
 }
