@@ -1,11 +1,13 @@
-import type { FastifyPluginCallback } from 'fastify'
-import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { DATABASE } from '../database/db.js'
-import { ApiContracts } from './api-contracts.js'
+import type {
+  ZodTypeProvider,
+  FastifyPluginCallbackZod,
+} from 'fastify-type-provider-zod'
+import { DATABASE } from '../../database/db.js'
+import { UserContracts } from './user-contracts.js'
 
-export const userRouter: FastifyPluginCallback = (fastify, _, done) => {
+export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
-    ...ApiContracts.users.createUser,
+    ...UserContracts.createUser,
     handler: async req => {
       const { name } = req.body
 
@@ -16,14 +18,14 @@ export const userRouter: FastifyPluginCallback = (fastify, _, done) => {
   })
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
-    ...ApiContracts.users.getUsers,
+    ...UserContracts.getUsers,
     handler: async () => {
       return DATABASE('users').select('*')
     },
   })
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
-    ...ApiContracts.users.deleteUser,
+    ...UserContracts.deleteUser,
     handler: async (request, reply) => {
       const { id } = request.params
 

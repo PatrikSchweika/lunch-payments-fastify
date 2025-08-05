@@ -10,7 +10,7 @@ import {
 } from 'fastify-type-provider-zod'
 
 import { APP_CONFIG, Environment } from './configuration/app-config.js'
-import { userRouter } from './routes/user-router.js'
+import { userRouter } from './routes/users/user-router.js'
 
 const app = fastify({
   logger: {
@@ -61,6 +61,8 @@ if (APP_CONFIG.environment === Environment.Production) {
     )
   })
 }
+
+await app.ready()
 
 app.listen({ port: APP_CONFIG.port }, (err, address) => {
   if (err) {
