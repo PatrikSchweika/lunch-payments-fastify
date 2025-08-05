@@ -4,6 +4,8 @@
   "type": "module",
   "description": "Contracts for the project",
   "scripts": {
+    "lint": "eslint src",
+    "format": "eslint --fix src",
     "build": "tsc --outDir dist"
   },
   "keywords": [],
@@ -13,6 +15,6 @@
     "zod": "^4.0.14"
   },
   "devDependencies": {
-    "@tsconfig/node23": "^23.0.0"
+    "@tsconfig/node24": "^24.0.1"
   }
 }

@@ -1,4 +1,7 @@
 packages:
-  - 'server'
-  - 'client'
-  - 'contracts'
+  - server
+  - client
+  - contracts
+
+onlyBuiltDependencies:
+  - better-sqlite3

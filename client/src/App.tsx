@@ -4,9 +4,9 @@ import { Welcome } from './Welcome.tsx'
 const QUERY_CLIENT = new QueryClient()
 
 export const App = () => {
-	return (
-		<QueryClientProvider client={QUERY_CLIENT}>
-			<Welcome />
-		</QueryClientProvider>
-	)
+  return (
+    <QueryClientProvider client={QUERY_CLIENT}>
+      <Welcome />
+    </QueryClientProvider>
+  )
 }

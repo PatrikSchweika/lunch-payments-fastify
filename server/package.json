@@ -5,9 +5,10 @@
 	"main": "src/index.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
+		"lint": "eslint src",
+		"format": "eslint --fix src",
+		"dev": "tsx --watch src/index.ts",
 		"build": "tsc --outDir dist",
-		"lint": "biome check",
 		"knex": "tsx --env-file .env ./node_modules/knex/bin/cli.js --knexfile src/database/knexfile.ts"
 	},
 	"keywords": [],
@@ -18,6 +19,7 @@
 		"@fastify/static": "^8.2.0",
 		"@fastify/swagger": "^9.5.1",
 		"@fastify/swagger-ui": "^5.2.3",
+		"better-sqlite3": "^12.2.0",
 		"contracts": "workspace:*",
 		"dotenv": "^17.2.1",
 		"fastify": "^5.4.0",
@@ -27,7 +29,7 @@
 		"zod": "^4.0.14"
 	},
 	"devDependencies": {
-		"@tsconfig/node23": "^23.0.2",
+		"@tsconfig/node24": "^24.0.1",
 		"@types/node": "^24.2.0",
 		"tsx": "^4.20.3"
 	}
