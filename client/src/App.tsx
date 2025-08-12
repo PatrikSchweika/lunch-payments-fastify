@@ -1,12 +1,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Welcome } from './Welcome.tsx'
+import { UserPage } from './pages/users/UserPage.tsx'
+import { AppLayout } from './AppLayout.tsx'
 
 const QUERY_CLIENT = new QueryClient()
 
 export const App = () => {
   return (
     <QueryClientProvider client={QUERY_CLIENT}>
-      <Welcome />
+      <AppLayout>
+        <UserPage />
+      </AppLayout>
     </QueryClientProvider>
   )
 }

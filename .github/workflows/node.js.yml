@@ -17,8 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: pnpm/action-setup@v4
-      name: Install pnpm
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
       with:
         version: 10
         run_install: false
@@ -29,7 +29,7 @@ jobs:
         node-version: 24
         cache: 'pnpm'
 
-    - name: Install dependecies
+    - name: Install dependencies
       run: pnpm install
 
     - name: Build application
