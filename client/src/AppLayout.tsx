@@ -7,7 +7,12 @@ interface LayoutProps {
 
 export const AppLayout = ({ children }: LayoutProps) => {
   return (
-    <Flex vertical align="center" style={{ width: '100%' }}>
+    <Flex
+      gap={100}
+      align="center"
+      justify="center"
+      style={{ width: '100%', paddingTop: '60px' }}
+    >
       {children}
     </Flex>
   )

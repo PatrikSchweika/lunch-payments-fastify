@@ -25,5 +25,13 @@ export const UserTable = ({ users }: UserTableProps) => {
     score: 0,
   }))
 
-  return <Table columns={COLUMNS} dataSource={dataSource} bordered />
+  return (
+    <Table
+      columns={COLUMNS}
+      dataSource={dataSource}
+      bordered
+      pagination={false}
+      style={{ minWidth: '400px' }}
+    />
+  )
 }

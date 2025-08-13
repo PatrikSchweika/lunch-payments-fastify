@@ -12,12 +12,17 @@ interface CreateUserFormProps {
 }
 
 export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
-  const { handleSubmit, control } = useForm<UserCreate>({
+  const { handleSubmit, control, reset } = useForm<UserCreate>({
     resolver: zodResolver(USER_CREATE_SCHEMA),
   })
 
+  const onSubmitInner = (data: UserCreate) => {
+    onSubmit(data)
+    reset()
+  }
+
   return (
-    <Form onFinish={handleSubmit(onSubmit)}>
+    <Form onFinish={handleSubmit(onSubmitInner)}>
       <FormItem control={control} name={'name'}>
         <Input />
       </FormItem>
