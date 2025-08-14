@@ -1,5 +1,4 @@
 import type { Knex } from 'knex'
-import { APP_CONFIG } from '../configuration/app-config.js'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -15,7 +14,7 @@ const config: KnexConfig = {
   development: {
     client: 'better-sqlite3',
     connection: {
-      filename: path.resolve(__dirname, '../../mydb.sqlite'),
+      filename: path.resolve(__dirname, '../../development.sqlite'),
       timezone: 'utc',
     },
     migrations: {
@@ -25,13 +24,15 @@ const config: KnexConfig = {
   },
 
   production: {
-    client: 'pg',
+    client: 'better-sqlite3',
     connection: {
-      connectionString: APP_CONFIG.pgConnectionString,
+      filename: path.resolve(__dirname, '../../production.sqlite'),
+      timezone: 'utc',
     },
     migrations: {
       tableName: 'knex_migrations',
     },
+    useNullAsDefault: true,
   },
 }
 

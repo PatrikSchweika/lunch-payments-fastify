@@ -11,7 +11,7 @@
 		"format": "pnpm -r format",
 		"build": "pnpm -r build && node -e \"fs.cpSync('client/dist', 'server/public', { recursive: true })\"",
 		"dev": "pnpm -r dev",
-		"kill": "kill-port 5173 & kill-port 8080"
+		"kill": "kill-port 5173 & kill-port 3000"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.32.0",

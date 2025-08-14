@@ -22,7 +22,7 @@ export const UserTable = ({ users }: UserTableProps) => {
   const dataSource = users.map(user => ({
     key: user.id,
     name: user.name,
-    score: 0,
+    score: user.score,
   }))
 
   return (

@@ -3,8 +3,7 @@ import { type ZodType, z } from 'zod/v4'
 export interface User {
   id: number
   name: string
-  createdAt: string
-  updatedAt: string
+  score: number
 }
 
 export interface UserCreate {
@@ -14,8 +13,7 @@ export interface UserCreate {
 export const USER_SCHEMA = z.object({
   id: z.number(),
   name: z.string().trim().nonempty(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  score: z.number(),
 }) satisfies ZodType<User>
 
 export const USER_CREATE_SCHEMA = z.object({

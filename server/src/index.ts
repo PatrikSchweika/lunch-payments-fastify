@@ -11,6 +11,7 @@ import {
 
 import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/users/user-router.js'
+import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js'
 
 const app = fastify({
   logger: {
@@ -40,6 +41,7 @@ app.register(fastifySwaggerUI, {
 })
 
 app.register(userRouter)
+app.register(lunchRecordRouter)
 
 if (APP_CONFIG.environment === Environment.Production) {
   app.register(fastifyStatic, {

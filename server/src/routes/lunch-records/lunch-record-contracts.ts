@@ -1,0 +1,63 @@
+import { z } from 'zod/v4'
+import {
+  LUNCH_RECORD_CREATE_SCHEMA,
+  LUNCH_RECORD_SCHEMA,
+} from 'contracts/src/models/lunch-record.js'
+
+export const LunchRecordContracts = {
+  getLunchRecords: {
+    method: 'GET',
+    url: '/api/lunchRecords',
+    schema: {
+      response: {
+        200: z.array(LUNCH_RECORD_SCHEMA),
+      },
+      tags: ['Lunch records'],
+      summary: 'Get all lunch records',
+    },
+  },
+
+  getUserLunchRecords: {
+    method: 'GET',
+    url: '/api/users/:userId/lunchRecords',
+    schema: {
+      params: z.object({
+        userId: z.coerce.number(),
+      }),
+      response: {
+        200: z.array(LUNCH_RECORD_SCHEMA),
+      },
+      tags: ['Lunch records'],
+      summary: 'Get user lunch records',
+    },
+  },
+
+  createLunchRecord: {
+    method: 'POST',
+    url: '/api/lunchRecords',
+    schema: {
+      body: LUNCH_RECORD_CREATE_SCHEMA,
+      response: {
+        201: LUNCH_RECORD_SCHEMA,
+      },
+      tags: ['Lunch records'],
+      summary: 'Create lunch record',
+    },
+  },
+
+  deleteLunchRecord: {
+    method: 'DELETE',
+    url: '/api/lunchRecords/:id',
+    schema: {
+      params: z.object({
+        id: z.coerce.number(),
+      }),
+      response: {
+        204: z.void(),
+        404: z.void(),
+      },
+      tags: ['Lunch records'],
+      summary: 'Delete lunch record',
+    },
+  },
+}

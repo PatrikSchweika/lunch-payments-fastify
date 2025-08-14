@@ -24,7 +24,7 @@ export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
   return (
     <Form onFinish={handleSubmit(onSubmitInner)}>
       <FormItem control={control} name={'name'}>
-        <Input />
+        <Input placeholder="Name" />
       </FormItem>
       <Form.Item>
         <Button type="primary" htmlType="submit">

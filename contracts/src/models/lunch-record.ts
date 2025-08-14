@@ -1,5 +1,17 @@
 import { z } from 'zod/v4'
 
+export const LUNCH_RECORD_CREATE_SCHEMA = z.object({
+  payerId: z.number(),
+  consumerIds: z.array(z.number()).nonempty(),
+  description: z.string().trim().nonempty(),
+  date: z.iso.datetime(),
+}) satisfies z.ZodType<LunchRecordCreate>
+
+export const LUNCH_RECORD_SCHEMA = z.object({
+  id: z.number(),
+  ...LUNCH_RECORD_CREATE_SCHEMA.shape,
+}) satisfies z.ZodType<LunchRecord>
+
 export interface LunchRecord {
   id: number
   payerId: number
@@ -7,13 +19,6 @@ export interface LunchRecord {
   description: string
   date: string
 }
-
-export const LUNCH_RECORD_CREATE_SCHEMA = z.object({
-  payerId: z.number(),
-  consumerIds: z.array(z.number()).nonempty(),
-  description: z.string().trim().nonempty(),
-  date: z.iso.datetime(),
-})
 
 export interface LunchRecordCreate {
   payerId: number

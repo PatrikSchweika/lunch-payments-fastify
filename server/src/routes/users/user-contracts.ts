@@ -9,7 +9,7 @@ export const UserContracts = {
       response: {
         200: z.array(USER_SCHEMA),
       },
-      tags: ['User'],
+      tags: ['Users'],
       summary: 'Get all users',
     },
   },
@@ -22,7 +22,7 @@ export const UserContracts = {
       response: {
         201: USER_SCHEMA,
       },
-      tags: ['User'],
+      tags: ['Users'],
       summary: 'Create user',
     },
   },
@@ -38,7 +38,7 @@ export const UserContracts = {
         204: z.void(),
         404: z.void(),
       },
-      tags: ['User'],
+      tags: ['Users'],
       summary: 'Delete user',
     },
   },
