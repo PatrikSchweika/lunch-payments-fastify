@@ -1,13 +1,13 @@
-import axios from 'axios'
 import type { User, UserCreate } from 'contracts/src/models/user.ts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {API_CLIENT} from "../../setup/api-client.ts";
 
 const fetchUsers = async () => {
-  return await axios.get<User[]>('api/users').then(res => res.data)
+  return await API_CLIENT.get<User[]>('api/users').then(res => res.data)
 }
 
 const createUser = async (data: UserCreate) => {
-  await axios.post('api/users', data)
+  await API_CLIENT.post('api/users', data)
 }
 
 export const useUsers = () =>

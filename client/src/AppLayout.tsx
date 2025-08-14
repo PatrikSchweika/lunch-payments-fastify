@@ -1,11 +1,7 @@
-import type { ReactNode } from 'react'
 import { Flex, Layout } from 'antd'
+import {Outlet} from "react-router";
 
-interface LayoutProps {
-  children: ReactNode
-}
-
-export const LunchAppLayout = ({ children }: LayoutProps) => {
+export const AppLayout = () => {
   return (
     <Layout style={{ minHeight: '100vh', padding: '0' }}>
       <Layout.Header />
@@ -16,7 +12,7 @@ export const LunchAppLayout = ({ children }: LayoutProps) => {
           justify="center"
           style={{ width: '100%', paddingTop: '60px' }}
         >
-          {children}
+          <Outlet />
         </Flex>
       </Layout.Content>
     </Layout>

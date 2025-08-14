@@ -1,36 +1,50 @@
-import { useCreateUser, useUsers } from './queries.ts'
-import { UserTable } from './UserTable.tsx'
-import { AddLunchRecordForm } from '../lunch-records/AddLunchRecordForm.tsx'
-import { App } from 'antd'
-import { CenteredSpin } from '../../atoms/CenteredSpin.ts'
-import { CreateUserForm } from './CreateUserForm.tsx'
-import { useCreateLunchRecord } from '../lunch-records/queries.ts'
-import type { LunchRecordCreate } from 'contracts/src/models/lunch-record.ts'
+import {useParams} from "react-router";
+import {useUsers} from "./queries.ts";
+import {useUserLunchRecords} from "../lunch-records/queries.ts";
+import {CenteredSpin} from "../../atoms/CenteredSpin.ts";
+import {useMemo} from "react";
 
 export const UserPage = () => {
-  const { message } = App.useApp()
+    const { userId } = useParams()
 
-  const { data, isPending } = useUsers()
-  const { mutate: createUser } = useCreateUser()
-  const { mutateAsync: createLunchRecord } = useCreateLunchRecord()
+    if (userId == null || isNaN(Number(userId))) {
+        return null
+    }
 
-  const handleLunchRecordSubmit = async (data: LunchRecordCreate) => {
-    await createLunchRecord(data)
-    await message.success('Lunch record added 🍔')
-  }
+    return (
+        <UserPageInner userId={Number(userId)} />
+    )
+}
 
-  if (isPending) {
-    return <CenteredSpin size="large" />
-  }
+interface UserPageInnerProps {
+    userId: number
+}
 
-  return (
-    <>
-      <UserTable users={data ?? []} />
-      <AddLunchRecordForm
-        users={data ?? []}
-        onSubmit={handleLunchRecordSubmit}
-      />
-      <CreateUserForm onSubmit={createUser} />
-    </>
-  )
+const UserPageInner = ({ userId }: UserPageInnerProps) => {
+    const { data: users, isPending } = useUsers()
+    const { data: userLunchRecords } = useUserLunchRecords(userId)
+
+    console.log(users)
+
+    const user = useMemo(() => {
+        if (!users) {
+            return null
+        }
+
+        return users.find(user => user.id === userId)
+    }, [users, userId])
+
+    if (!user && !isPending) {
+        return <div>User {userId} not found</div>
+    }
+
+    return (
+        <>
+            { isPending && <CenteredSpin size="large" /> }
+            { user && <div>User {user.name}</div> }
+        </>
+
+
+
+    )
 }

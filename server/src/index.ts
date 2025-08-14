@@ -21,6 +21,9 @@ const app = fastify({
   },
 })
 
+// todo: Add basic auth
+// https://www.npmjs.com/package/@fastify/basic-auth/v/3.0.0
+
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
