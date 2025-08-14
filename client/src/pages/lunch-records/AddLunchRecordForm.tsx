@@ -5,15 +5,7 @@ import {
 } from 'contracts/src/models/lunch-record.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { User } from 'contracts/src/models/user.ts'
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Transfer,
-  Typography,
-} from 'antd'
+import { Button, DatePicker, Form, Input, Select, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
@@ -22,6 +14,8 @@ interface AddLunchRecordFormProps {
   users: User[]
   onSubmit: (data: LunchRecordCreate) => void
 }
+
+const DATE_FORMAT = 'DD.MM.YYYY'
 
 export const AddLunchRecordForm = ({
   users,
@@ -34,7 +28,7 @@ export const AddLunchRecordForm = ({
     control,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LunchRecordCreate>({
     resolver: zodResolver(LUNCH_RECORD_CREATE_SCHEMA),
     defaultValues: {
@@ -62,13 +56,13 @@ export const AddLunchRecordForm = ({
     [users],
   )
 
-  // const consumerOptions = useMemo(
-  //   () => payerOptions.filter(option => option.value !== payerId),
-  //   [payerOptions, payerId],
-  // )
+  const consumerOptions = useMemo(
+    () => payerOptions.filter(option => option.value !== payerId),
+    [payerOptions, payerId],
+  )
 
   return (
-    <Form onFinish={handleSubmit(onSubmitInner)}>
+    <Form onFinish={handleSubmit(onSubmitInner)} style={{ width: '250px' }}>
       <Typography.Title level={3} style={{ textAlign: 'center' }}>
         Add Lunch Record
       </Typography.Title>
@@ -83,15 +77,16 @@ export const AddLunchRecordForm = ({
             <DatePicker
               placeholder="Date"
               style={{ width: '100%' }}
+              allowClear={false}
+              format={DATE_FORMAT}
               value={field.value ? dayjs(field.value) : null}
               onChange={date => field.onChange(date.toISOString())}
               disabledDate={date => date.isAfter(dayjs())}
               disabled={field.disabled}
               onBlur={field.onBlur}
-              allowClear={false}
             />
           )}
-        ></Controller>
+        />
       </Form.Item>
 
       <FormItem control={control} name={'description'}>
@@ -109,20 +104,12 @@ export const AddLunchRecordForm = ({
             <Select
               showSearch
               placeholder="Payer"
-              optionFilterProp={'label'}
-              value={
-                field.value
-                  ? {
-                      value: field.value,
-                      label: users.find(user => user.id === field.value)?.name,
-                    }
-                  : null
-              }
-              labelInValue
+              optionFilterProp="label"
+              value={field.value}
               options={payerOptions}
               disabled={field.disabled}
               onBlur={field.onBlur}
-              onSelect={user => field.onChange(user.value)}
+              onSelect={user => field.onChange(user)}
             />
           )}
         />
@@ -135,39 +122,31 @@ export const AddLunchRecordForm = ({
         <Controller
           control={control}
           name={'consumerIds'}
+          disabled={payerId == null}
           render={({ field }) => (
-            // <Select
-            //     showSearch
-            //     placeholder="Consumers"
-            //     optionFilterProp={"label"}
-            //     mode={"multiple"}
-            //     value={field.value.map(consumerId => ({ value: consumerId, label: consumerOptions.find(option => option.value === consumerId)?.label }))}
-            //     labelInValue
-            //     options={consumerOptions}
-            //     disabled={field.disabled}
-            //     onBlur={field.onBlur}
-            //     onSelect={(user) => field.onChange(user.value)}
-            // />
-            <Transfer
-              listStyle={{ minHeight: '400px' }}
+            <Select
               showSearch
-              oneWay
-              dataSource={users.filter(user => user.id !== payerId)}
-              filterOption={(input, user) =>
-                user.name.toLowerCase().includes(input.toLowerCase())
-              }
-              rowKey={user => user.id}
-              targetKeys={field.value}
+              allowClear
+              placeholder="Consumers"
+              optionFilterProp="label"
+              mode="multiple"
+              value={field.value}
+              options={consumerOptions}
               disabled={field.disabled}
-              onChange={values => field.onChange(values)}
-              render={user => user.name}
+              onBlur={field.onBlur}
+              onChange={consumerIds => field.onChange(consumerIds)}
             />
           )}
         />
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+        <Button
+          type="primary"
+          htmlType="submit"
+          style={{ width: '100%' }}
+          disabled={isSubmitting}
+        >
           Add
         </Button>
       </Form.Item>

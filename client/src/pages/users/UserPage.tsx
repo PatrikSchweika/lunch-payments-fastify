@@ -1,17 +1,19 @@
-import { useCreateUser, useUsers } from './queries.ts'
+import { useUsers } from './queries.ts'
 import { UserTable } from './UserTable.tsx'
 import { AddLunchRecordForm } from '../lunch-records/AddLunchRecordForm.tsx'
-import { CreateUserForm } from './CreateUserForm.tsx'
+import { App } from 'antd'
 
 export const UserPage = () => {
   const { data } = useUsers()
-  const { mutate: createUser } = useCreateUser()
+  const { message } = App.useApp()
 
   return (
     <>
       <UserTable users={data ?? []} />
-      <AddLunchRecordForm users={data ?? []} onSubmit={console.log} />
-      <CreateUserForm onSubmit={createUser} />
+      <AddLunchRecordForm
+        users={data ?? []}
+        onSubmit={data => message.success(JSON.stringify(data))}
+      />
     </>
   )
 }

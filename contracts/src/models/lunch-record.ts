@@ -10,7 +10,7 @@ export interface LunchRecord {
 
 export const LUNCH_RECORD_CREATE_SCHEMA = z.object({
   payerId: z.number(),
-  consumerIds: z.array(z.number()),
+  consumerIds: z.array(z.number()).nonempty(),
   description: z.string().trim().nonempty(),
   date: z.iso.datetime(),
 })
