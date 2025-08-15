@@ -9,13 +9,12 @@ import { Button, DatePicker, Form, Input, Select, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
+import { DATE_FORMAT } from '../../utils/format.ts'
 
 interface AddLunchRecordFormProps {
   users: User[]
   onSubmit: (data: LunchRecordCreate) => void
 }
-
-const DATE_FORMAT = 'DD.MM.YYYY'
 
 export const AddLunchRecordForm = ({
   users,

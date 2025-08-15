@@ -53,8 +53,17 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...UserContracts.createUser,
-    handler: async req => {
+    handler: async (req, reply) => {
       const { name } = req.body
+
+      const existingUser = await DATABASE('users').where({ name }).first()
+
+      if (existingUser) {
+        reply.code(409).send()
+
+        // todo: add error message to schema
+        // reply.code(409).send({ message: `User with name ${name} already exists.` })
+      }
 
       const data = await DATABASE('users').insert({ name }).returning('*')
 

@@ -1,11 +1,19 @@
 import type { User } from 'contracts/src/models/user.ts'
-import { Table } from 'antd'
+import { Table, type TableProps } from 'antd'
+import { Link } from 'react-router'
 
-const COLUMNS = [
+interface DataType {
+  key: number
+  name: string
+  score: number
+}
+
+const COLUMNS: TableProps<DataType>['columns'] = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
+    render: (_, user) => <Link to={`/user/${user.key}`}>{user.name}</Link>,
   },
   {
     title: 'Score',

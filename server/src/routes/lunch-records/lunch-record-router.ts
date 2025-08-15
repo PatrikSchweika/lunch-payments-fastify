@@ -35,10 +35,50 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.getUserLunchRecords,
-    handler: async req => {
-      // const { userId } = req.params
+    handler: async (req, reply) => {
+      const { userId } = req.params
+      const user = await DATABASE('users').where({ id: userId }).first()
 
-      return []
+      if (!user) {
+        return reply.code(404).send()
+      }
+
+      const lunchConsumerEntries = await DATABASE('lunchConsumers')
+        .select('*')
+        .where({ consumerId: userId })
+
+      const lunchConsumerRecords = await Promise.all(
+        lunchConsumerEntries.map(async entry => {
+          return (await DATABASE('lunchRecords')
+            .select('*')
+            .where({ id: entry.lunchRecordId })
+            .first())!
+        }),
+      )
+
+      const lunchPayerEntries = await DATABASE('lunchRecords')
+        .select('*')
+        .where({ payerId: userId })
+
+      const lunchRecords = [...lunchConsumerRecords, ...lunchPayerEntries].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      )
+
+      return Promise.all(
+        lunchRecords.map(async record => {
+          const consumers = await DATABASE('lunchConsumers')
+            .where({ lunchRecordId: record.id })
+            .select('consumerId')
+
+          return {
+            id: record.id,
+            date: record.date,
+            payerId: record.payerId,
+            description: record.description,
+            consumerIds: consumers.map(consumer => consumer.consumerId),
+          }
+        }),
+      )
     },
   })
 
@@ -74,9 +114,9 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     handler: async (request, reply) => {
       const { id } = request.params
 
-      const exists = await DATABASE('lunchRecords').where({ id }).first()
+      const lunchRecord = await DATABASE('lunchRecords').where({ id }).first()
 
-      if (!exists) {
+      if (!lunchRecord) {
         return reply.code(404)
       }
 

@@ -3,7 +3,7 @@ import { App } from 'antd'
 
 import '@ant-design/v5-patch-for-react-19'
 import './setup/zod-errors.ts'
-import {AppRouter} from "./AppRouter.tsx";
+import { AppRouter } from './AppRouter.tsx'
 
 const QUERY_CLIENT = new QueryClient()
 

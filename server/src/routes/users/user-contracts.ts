@@ -21,6 +21,7 @@ export const UserContracts = {
       body: USER_CREATE_SCHEMA,
       response: {
         201: USER_SCHEMA,
+        409: z.void(),
       },
       tags: ['Users'],
       summary: 'Create user',
