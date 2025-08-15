@@ -15,6 +15,7 @@ import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/users/user-router.js'
 import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js'
 import fastifyBasicAuth from '@fastify/basic-auth'
+import { AUTHENTICATE, validate } from './auth/basic-auth.js'
 
 const app = fastify({
   logger: {
@@ -39,20 +40,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-const USERS = [APP_CONFIG.user, APP_CONFIG.admin]
-
-app.register(fastifyBasicAuth, {
-  validate: async (username, password) => {
-    const validUser = USERS.some(
-      user => user.username === username && user.password === password,
-    )
-
-    if (!validUser) {
-      return app.httpErrors.unauthorized('Invalid credentials')
-    }
-  },
-  authenticate: { realm: 'Lunch app' },
-})
+app.register(fastifyBasicAuth, { validate, authenticate: AUTHENTICATE })
 
 app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',

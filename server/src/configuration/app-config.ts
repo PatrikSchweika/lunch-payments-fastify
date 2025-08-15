@@ -8,9 +8,15 @@ export enum Environment {
   Production = 'production',
 }
 
+export enum UserRole {
+  User = 'user',
+  Admin = 'admin',
+}
+
 export interface AuthUser {
   readonly username: string
   readonly password: string
+  readonly role: UserRole
 }
 
 export interface AppConfig {
@@ -40,12 +46,14 @@ if (!env.success) {
 export const APP_CONFIG: AppConfig = {
   environment: env.data.NODE_ENV,
   port: env.data.PORT,
-  admin: {
-    username: env.data.ADMIN_USERNAME,
-    password: env.data.ADMIN_PASSWORD,
-  },
   user: {
     username: env.data.USER_USERNAME,
     password: env.data.USER_PASSWORD,
+    role: UserRole.User,
+  },
+  admin: {
+    username: env.data.ADMIN_USERNAME,
+    password: env.data.ADMIN_PASSWORD,
+    role: UserRole.Admin,
   },
 } as const

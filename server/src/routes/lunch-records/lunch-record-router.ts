@@ -4,6 +4,8 @@ import type {
 } from 'fastify-type-provider-zod'
 import { DATABASE } from '../../database/db.js'
 import { LunchRecordContracts } from './lunch-record-contracts.js'
+import { requireRole } from '../../auth/basic-auth.js'
+import { UserRole } from '../../configuration/app-config.js'
 
 export const lunchRecordRouter: FastifyPluginCallbackZod = (
   fastify,
@@ -138,7 +140,7 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.deleteLunchRecord,
-    onRequest: fastify.basicAuth,
+    onRequest: [fastify.basicAuth, requireRole(UserRole.Admin)],
     handler: async (request, reply) => {
       const { id } = request.params
 

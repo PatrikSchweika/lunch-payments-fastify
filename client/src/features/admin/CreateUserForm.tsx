@@ -4,7 +4,7 @@ import {
   type UserCreate,
 } from 'contracts/src/models/user.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Form, Input } from 'antd'
+import { Button, Form, Input, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'
 
 interface CreateUserFormProps {
@@ -23,11 +23,15 @@ export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
 
   return (
     <Form onFinish={handleSubmit(onSubmitInner)}>
+      <Typography.Title level={3} style={{ textAlign: 'center' }}>
+        Create user
+      </Typography.Title>
+
       <FormItem control={control} name={'name'}>
         <Input placeholder="Name" />
       </FormItem>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
           Create
         </Button>
       </Form.Item>
