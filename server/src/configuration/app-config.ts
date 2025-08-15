@@ -1,5 +1,6 @@
 import dotenv from 'dotenv'
 import { z } from 'zod/v4'
+import { AuthUserRole } from 'contracts/src/models/auth-user.js'
 
 dotenv.config()
 
@@ -8,22 +9,17 @@ export enum Environment {
   Production = 'production',
 }
 
-export enum UserRole {
-  User = 'user',
-  Admin = 'admin',
-}
-
-export interface AuthUser {
+export interface AuthUserConfig {
   readonly username: string
   readonly password: string
-  readonly role: UserRole
+  readonly role: AuthUserRole
 }
 
 export interface AppConfig {
   readonly environment: Environment
   readonly port: number
-  readonly user: AuthUser
-  readonly admin: AuthUser
+  readonly user: AuthUserConfig
+  readonly admin: AuthUserConfig
 }
 
 const ENV_SCHEMA = z.object({
@@ -49,11 +45,11 @@ export const APP_CONFIG: AppConfig = {
   user: {
     username: env.data.USER_USERNAME,
     password: env.data.USER_PASSWORD,
-    role: UserRole.User,
+    role: AuthUserRole.User,
   },
   admin: {
     username: env.data.ADMIN_USERNAME,
     password: env.data.ADMIN_PASSWORD,
-    role: UserRole.Admin,
+    role: AuthUserRole.Admin,
   },
 } as const

@@ -1,6 +1,6 @@
-import { Typography } from 'antd'
 import { CreateUserForm } from './CreateUserForm.tsx'
-import { useCreateUser } from '../users/queries.ts'
+import { useCreateUser, useUsers } from '../users/queries.ts'
+import { UserTable } from '../users/UserTable.tsx'
 
 export const AdminPage = () => {
   // todo: delete users
@@ -8,10 +8,11 @@ export const AdminPage = () => {
   // todo: add users
 
   const { mutate: createUser } = useCreateUser()
+  const { data: users } = useUsers()
 
   return (
     <>
-      <Typography>Admin page</Typography>
+      <UserTable users={users ?? []} onDelete={console.log} />
       <CreateUserForm onSubmit={createUser} />
     </>
   )

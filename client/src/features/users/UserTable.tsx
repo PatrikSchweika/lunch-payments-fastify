@@ -1,6 +1,7 @@
 import type { User } from 'contracts/src/models/user.ts'
 import { Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
+import { DeleteOutlined } from '@ant-design/icons'
 
 interface DataType {
   key: number
@@ -8,7 +9,7 @@ interface DataType {
   score: number
 }
 
-const COLUMNS: TableProps<DataType>['columns'] = [
+const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
   {
     title: 'Name',
     dataIndex: 'name',
@@ -27,18 +28,32 @@ const COLUMNS: TableProps<DataType>['columns'] = [
 
 interface UserTableProps {
   users: User[]
+  onDelete?: (userId: number) => void
 }
 
-export const UserTable = ({ users }: UserTableProps) => {
+export const UserTable = ({ users, onDelete }: UserTableProps) => {
   const dataSource = users.map(user => ({
     key: user.id,
     name: user.name,
     score: user.score,
   }))
 
+  const columns = !onDelete
+    ? DEFAULT_COLUMNS
+    : [
+        ...DEFAULT_COLUMNS,
+        {
+          title: 'Actions',
+          key: 'actions',
+          render: (_: unknown, user: DataType) => (
+            <DeleteOutlined onClick={() => onDelete(user.key)} />
+          ),
+        },
+      ]
+
   return (
     <Table
-      columns={COLUMNS}
+      columns={columns}
       dataSource={dataSource}
       bordered
       pagination={false}

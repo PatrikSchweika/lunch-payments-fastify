@@ -6,8 +6,8 @@ import { DATABASE } from '../../database/db.js'
 import { UserContracts } from './user-contracts.js'
 import { UserDb } from '../../database/models/user.js'
 import { User } from 'contracts/src/models/user.js'
-import { requireRole } from '../../auth/basic-auth.js'
-import { UserRole } from '../../configuration/app-config.js'
+import { requireRole } from '../auth/basic-auth.js'
+import { AuthUserRole } from 'contracts/src/models/auth-user.js'
 
 const mapUser = (user: UserDb, score: number): User => ({
   id: user.id,
@@ -74,7 +74,7 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...UserContracts.createUser,
-    onRequest: [fastify.basicAuth, requireRole(UserRole.Admin)],
+    onRequest: [fastify.basicAuth, requireRole(AuthUserRole.Admin)],
     handler: async (req, reply) => {
       const { name } = req.body
 
@@ -92,7 +92,7 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...UserContracts.deleteUser,
-    onRequest: [fastify.basicAuth, requireRole(UserRole.Admin)],
+    onRequest: [fastify.basicAuth, requireRole(AuthUserRole.Admin)],
     handler: async (request, reply) => {
       const { id } = request.params
 

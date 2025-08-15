@@ -15,7 +15,7 @@ import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/users/user-router.js'
 import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js'
 import fastifyBasicAuth from '@fastify/basic-auth'
-import { AUTHENTICATE, validate } from './auth/basic-auth.js'
+import { AUTHENTICATE, validate } from './routes/auth/basic-auth.js'
 
 const app = fastify({
   logger: {

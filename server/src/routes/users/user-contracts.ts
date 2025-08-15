@@ -12,6 +12,7 @@ export const UserContracts = {
     schema: {
       response: {
         200: z.array(USER_SCHEMA),
+        401: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Users'],
       summary: 'Get all users',
@@ -28,6 +29,7 @@ export const UserContracts = {
       response: {
         200: USER_SCHEMA,
         400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Users'],
@@ -43,6 +45,8 @@ export const UserContracts = {
       response: {
         201: USER_SCHEMA,
         400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
+        403: API_ERROR_MESSAGE_SCHEMA,
         409: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Users'],
@@ -60,6 +64,8 @@ export const UserContracts = {
       response: {
         204: z.void(),
         400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
+        403: API_ERROR_MESSAGE_SCHEMA,
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Users'],

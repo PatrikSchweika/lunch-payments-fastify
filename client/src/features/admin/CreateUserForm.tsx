@@ -12,7 +12,12 @@ interface CreateUserFormProps {
 }
 
 export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
-  const { handleSubmit, control, reset } = useForm<UserCreate>({
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<UserCreate>({
     resolver: zodResolver(USER_CREATE_SCHEMA),
   })
 
@@ -31,7 +36,12 @@ export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
         <Input placeholder="Name" />
       </FormItem>
       <Form.Item>
-        <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+        <Button
+          type="primary"
+          disabled={isSubmitting}
+          htmlType="submit"
+          style={{ width: '100%' }}
+        >
           Create
         </Button>
       </Form.Item>

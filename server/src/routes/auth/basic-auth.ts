@@ -1,9 +1,9 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { APP_CONFIG, AuthUser } from '../configuration/app-config.js'
+import { APP_CONFIG, AuthUserConfig } from '../../configuration/app-config.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
-    user?: Omit<AuthUser, 'password'>
+    user?: Omit<AuthUserConfig, 'password'>
   }
 }
 
@@ -22,7 +22,7 @@ export const validate = async (
   )
 
   if (!user) {
-    reply.notFound('Invalid credentials')
+    reply.unauthorized('Invalid credentials')
     return
   }
 
