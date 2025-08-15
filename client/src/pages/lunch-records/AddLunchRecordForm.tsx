@@ -48,10 +48,12 @@ export const AddLunchRecordForm = ({
 
   const payerOptions = useMemo(
     () =>
-      users.map(user => ({
-        value: user.id,
-        label: user.name,
-      })),
+      users
+        .map(user => ({
+          value: user.id,
+          label: user.name,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
     [users],
   )
 

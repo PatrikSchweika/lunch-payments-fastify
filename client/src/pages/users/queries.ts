@@ -3,9 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_CLIENT } from '../../setup/api-client.ts'
 
 const fetchUsers = async () => {
-  const users = await API_CLIENT.get<User[]>('api/users').then(res => res.data)
-
-  return users.sort((a, b) => a.name.localeCompare(b.name))
+  return await API_CLIENT.get<User[]>('api/users').then(res => res.data)
 }
 
 const createUser = async (data: UserCreate) => {

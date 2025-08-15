@@ -13,12 +13,15 @@ const COLUMNS: TableProps<DataType>['columns'] = [
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    render: (_, user) => <Link to={`/user/${user.key}`}>{user.name}</Link>,
+    render: (_, user) => <Link to={`/users/${user.key}`}>{user.name}</Link>,
+    sorter: (a, b) => a.name.localeCompare(b.name),
   },
   {
     title: 'Score',
     dataIndex: 'score',
     key: 'score',
+    sorter: (a, b) => a.score - b.score,
+    defaultSortOrder: 'descend',
   },
 ]
 

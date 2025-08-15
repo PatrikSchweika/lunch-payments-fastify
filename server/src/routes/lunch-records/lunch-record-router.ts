@@ -12,6 +12,7 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 ) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.getLunchRecords,
+    onRequest: fastify.basicAuth,
     handler: async () => {
       const lunchRecordEntries = await DATABASE('lunchRecords').select('*')
 
@@ -35,12 +36,13 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.getUserLunchRecords,
+    onRequest: fastify.basicAuth,
     handler: async (req, reply) => {
       const { userId } = req.params
       const user = await DATABASE('users').where({ id: userId }).first()
 
       if (!user) {
-        return reply.code(404).send()
+        return reply.notFound(`User with id ${userId} not found.`)
       }
 
       const lunchConsumerEntries = await DATABASE('lunchConsumers')
@@ -84,8 +86,33 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.createLunchRecord,
-    handler: async req => {
+    onRequest: fastify.basicAuth,
+    handler: async (req, reply) => {
       const { date, description, payerId, consumerIds } = req.body
+
+      const payer = await DATABASE('users').where({ id: payerId }).first()
+
+      const notFoundUsers: number[] = []
+
+      if (!payer) {
+        notFoundUsers.push(payerId)
+      }
+
+      for (const consumerId of consumerIds) {
+        const consumer = await DATABASE('users')
+          .where({ id: consumerId })
+          .first()
+
+        if (!consumer) {
+          notFoundUsers.push(consumerId)
+        }
+      }
+
+      if (notFoundUsers.length > 0) {
+        return reply.notFound(
+          `Users with ids not found: ${notFoundUsers.join(', ')}`,
+        )
+      }
 
       const lunchRecordDb = await DATABASE('lunchRecords')
         .insert({
@@ -111,13 +138,14 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...LunchRecordContracts.deleteLunchRecord,
+    onRequest: fastify.basicAuth,
     handler: async (request, reply) => {
       const { id } = request.params
 
       const lunchRecord = await DATABASE('lunchRecords').where({ id }).first()
 
       if (!lunchRecord) {
-        return reply.code(404)
+        return reply.notFound(`Lunch record with id ${id} not found.`)
       }
 
       await DATABASE('lunchRecords').where({ id }).delete()

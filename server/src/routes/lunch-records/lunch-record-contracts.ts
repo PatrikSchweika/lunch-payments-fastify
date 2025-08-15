@@ -3,6 +3,10 @@ import {
   LUNCH_RECORD_CREATE_SCHEMA,
   LUNCH_RECORD_SCHEMA,
 } from 'contracts/src/models/lunch-record.js'
+import {
+  API_ERROR_MESSAGE_SCHEMA,
+  API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+} from 'contracts/src/models/error.js'
 
 export const LunchRecordContracts = {
   getLunchRecords: {
@@ -26,6 +30,8 @@ export const LunchRecordContracts = {
       }),
       response: {
         200: z.array(LUNCH_RECORD_SCHEMA),
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],
       summary: 'Get user lunch records',
@@ -39,6 +45,8 @@ export const LunchRecordContracts = {
       body: LUNCH_RECORD_CREATE_SCHEMA,
       response: {
         201: LUNCH_RECORD_SCHEMA,
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],
       summary: 'Create lunch record',
@@ -54,7 +62,8 @@ export const LunchRecordContracts = {
       }),
       response: {
         204: z.void(),
-        404: z.void(),
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],
       summary: 'Delete lunch record',

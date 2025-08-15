@@ -10,7 +10,7 @@ import type { LunchRecordCreate } from 'contracts/src/models/lunch-record.ts'
 export const HomePage = () => {
   const { message } = App.useApp()
 
-  const { data, isPending } = useUsers()
+  const { data: users, isPending } = useUsers()
   const { mutate: createUser } = useCreateUser()
   const { mutateAsync: createLunchRecord } = useCreateLunchRecord()
 
@@ -25,9 +25,9 @@ export const HomePage = () => {
 
   return (
     <>
-      <UserTable users={data ?? []} />
+      <UserTable users={users ?? []} />
       <AddLunchRecordForm
-        users={data ?? []}
+        users={users ?? []}
         onSubmit={handleLunchRecordSubmit}
       />
       <CreateUserForm onSubmit={createUser} />

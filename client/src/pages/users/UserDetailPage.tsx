@@ -24,8 +24,6 @@ const UserPageInner = ({ userId }: UserPageInnerProps) => {
   const { data: users, isPending } = useUsers()
   const { data: userLunchRecords } = useUserLunchRecords(userId)
 
-  console.log(users)
-
   const user = useMemo(() => {
     if (!users) {
       return null

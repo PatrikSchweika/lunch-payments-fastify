@@ -2,7 +2,9 @@ import path from 'node:path'
 import fastifyStatic from '@fastify/static'
 import fastifySwagger from '@fastify/swagger'
 import fastifySwaggerUI from '@fastify/swagger-ui'
+import fastifySensible from '@fastify/sensible'
 import fastify from 'fastify'
+
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -12,6 +14,7 @@ import {
 import { APP_CONFIG, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/users/user-router.js'
 import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js'
+import fastifyBasicAuth from '@fastify/basic-auth'
 
 const app = fastify({
   logger: {
@@ -21,17 +24,14 @@ const app = fastify({
   },
 })
 
-// todo: Add basic auth
-// https://www.npmjs.com/package/@fastify/basic-auth/v/3.0.0
-
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
+app.register(fastifySensible)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'FastifyApi',
-      description: 'Fastify backend service',
+      title: 'Lunch app',
       version: '1.0.0',
     },
     servers: [],
@@ -39,10 +39,24 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
+const USERS = [APP_CONFIG.user, APP_CONFIG.admin]
+
+app.register(fastifyBasicAuth, {
+  validate: async (username, password) => {
+    const validUser = USERS.some(
+      user => user.username === username && user.password === password,
+    )
+
+    if (!validUser) {
+      return app.httpErrors.unauthorized('Invalid credentials')
+    }
+  },
+  authenticate: { realm: 'Lunch app' },
+})
+
 app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
 })
-
 app.register(userRouter)
 app.register(lunchRecordRouter)
 
@@ -52,15 +66,10 @@ if (APP_CONFIG.environment === Environment.Production) {
   })
 
   app.get('/', (_, reply) => {
-    // todo: require login
-
     return reply.sendFile('index.html')
   })
 } else {
   app.get('/*', (request, reply) => {
-    // todo: path does not start with api
-    // todo: require login
-
     return reply.redirect(
       `${request.protocol}://${request.hostname}:5173${request.originalUrl}`,
     )

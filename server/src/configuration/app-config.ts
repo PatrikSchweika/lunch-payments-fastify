@@ -8,12 +8,12 @@ export enum Environment {
   Production = 'production',
 }
 
-interface AuthUser {
+export interface AuthUser {
   readonly username: string
   readonly password: string
 }
 
-interface AppConfig {
+export interface AppConfig {
   readonly environment: Environment
   readonly port: number
   readonly user: AuthUser
