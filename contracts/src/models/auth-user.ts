@@ -2,7 +2,7 @@ import { z } from 'zod/v4'
 
 export enum AuthUserRole {
   User = 'User',
-  Admin = 'Admin'
+  Admin = 'Admin',
 }
 
 export interface AuthUser {
