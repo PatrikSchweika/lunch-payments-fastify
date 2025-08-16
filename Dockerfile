@@ -1,16 +1,56 @@
-FROM node:24-alpine AS builder
-WORKDIR /usr/src/app
+FROM node:24-alpine AS build
+WORKDIR /app
 
-# Install pnpm globally
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy only package files first (for better caching of dependencies)
-COPY . .
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm fetch
+
+COPY package.json .
+COPY server/package.json server/package.json
+COPY contracts/package.json contracts/package.json
+COPY client/package.json client/package.json
+
+RUN pnpm install -r --offline
+
+COPY . .
 
 RUN pnpm build
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start"]
+CMD ["pnpm", "start"]
+
+#Production stage
+#FROM node:24-alpine AS production
+#
+#WORKDIR /app
+#
+#COPY --from=build /app/package.json .
+#COPY --from=build /app/server/package.json ./server/package.json
+#COPY --from=build /app/client/package.json ./client/package.json
+#COPY --from=build /app/contracts/package.json ./contracts/package.json
+#COPY --from=build /app/pnpm-workspace.yaml .
+#COPY --from=build /app/pnpm-lock.yaml .
+#COPY --from=build /root/.pnpm-store /root/.pnpm-store
+#
+#RUN pnpm install -r --offline --prod
+#
+#COPY --from=build /app/server/dist ./server/dist
+#COPY --from=build /app/server/public ./server/public
+#
+#EXPOSE 3000
+#
+#CMD ["pnpm", "start"]
+
+#FROM node:24-alpine AS prod
+#WORKDIR /app
+#
+#COPY --from=build /app/server/node_modules /app/node_modules
+#COPY --from=build /app/server/dist /app/dist
+#COPY --from=build /app/server/public /app/public
+#
+#EXPOSE 3000
+#
+#CMD [ "node", "dist/index.js" ]

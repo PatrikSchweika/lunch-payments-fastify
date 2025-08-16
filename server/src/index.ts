@@ -68,7 +68,7 @@ if (APP_CONFIG.environment === Environment.Production) {
 
 await app.ready()
 
-app.listen({ port: APP_CONFIG.port }, (err, address) => {
+app.listen({ port: APP_CONFIG.port, host: APP_CONFIG.host }, (err, address) => {
   if (err) {
     console.error(err)
     process.exit(1)

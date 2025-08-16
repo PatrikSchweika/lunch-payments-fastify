@@ -17,6 +17,7 @@ export interface AuthUserConfig {
 
 export interface AppConfig {
   readonly environment: Environment
+  readonly host: string
   readonly port: number
   readonly user: AuthUserConfig
   readonly admin: AuthUserConfig
@@ -25,6 +26,7 @@ export interface AppConfig {
 const ENV_SCHEMA = z.object({
   NODE_ENV: z.enum(Environment).default(Environment.Development),
   PORT: z.coerce.number().default(3000),
+  HOST: z.string().default('0.0.0.0'),
   USER_USERNAME: z.string().nonempty(),
   USER_PASSWORD: z.string().nonempty(),
   ADMIN_USERNAME: z.string().nonempty(),
@@ -42,6 +44,7 @@ if (!env.success) {
 export const APP_CONFIG: AppConfig = {
   environment: env.data.NODE_ENV,
   port: env.data.PORT,
+  host: env.data.HOST,
   user: {
     username: env.data.USER_USERNAME,
     password: env.data.USER_PASSWORD,
