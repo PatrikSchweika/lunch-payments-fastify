@@ -1,8 +1,8 @@
 import { z } from 'zod/v4'
 
 export enum AuthUserRole {
-  User = 'user',
-  Admin = 'admin',
+  User = 'User',
+  Admin = 'Admin'
 }
 
 export interface AuthUser {
@@ -13,4 +13,4 @@ export interface AuthUser {
 export const AUTH_USER_SCHEMA = z.object({
   username: z.string().nonempty(),
   role: z.enum(AuthUserRole),
-})
+}) satisfies z.ZodType<AuthUser>
