@@ -1,10 +1,14 @@
 import { useParams } from 'react-router'
 import { useUsers } from './queries.ts'
-import { useUserLunchRecords } from '../lunch-records/queries.ts'
+import {
+  useDeleteLunchRecord,
+  useUserLunchRecords,
+} from '../lunch-records/queries.ts'
 import { CenteredSpin } from '../../atoms/CenteredSpin.ts'
 import { useMemo } from 'react'
 import { UserLunchRecordsTable } from './UserLunchRecordsTable.tsx'
 import { Flex, Typography } from 'antd'
+import { useIsAdmin } from '../auth/queries.ts'
 
 export const UserDetailPage = () => {
   const { userId } = useParams()
@@ -23,6 +27,9 @@ interface UserPageInnerProps {
 const UserPageInner = ({ userId }: UserPageInnerProps) => {
   const { data: users, isPending } = useUsers()
   const { data: userLunchRecords } = useUserLunchRecords(userId)
+
+  const isAdmin = useIsAdmin()
+  const { mutate: deleteLunchRecord } = useDeleteLunchRecord()
 
   const user = useMemo(() => {
     if (!users) {
@@ -48,6 +55,7 @@ const UserPageInner = ({ userId }: UserPageInnerProps) => {
             user={user}
             lunchRecords={userLunchRecords ?? []}
             users={users ?? []}
+            onDelete={isAdmin ? deleteLunchRecord : undefined}
           />
         </Flex>
       )}

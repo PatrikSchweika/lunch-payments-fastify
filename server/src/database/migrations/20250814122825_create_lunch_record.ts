@@ -20,11 +20,19 @@ export async function up(knex: Knex): Promise<void> {
 
     table.integer('lunchRecordId').index().unsigned().notNullable()
 
-    table.foreign('lunchRecordId').references('id').inTable('lunchRecords')
+    table
+      .foreign('lunchRecordId')
+      .references('id')
+      .inTable('lunchRecords')
+      .onDelete('CASCADE')
 
     table.integer('consumerId').index().unsigned().notNullable()
 
-    table.foreign('consumerId').references('id').inTable('users')
+    table
+      .foreign('consumerId')
+      .references('id')
+      .inTable('users')
+      .onDelete('CASCADE')
 
     table.unique(['lunchRecordId', 'consumerId'])
   })

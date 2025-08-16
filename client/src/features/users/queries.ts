@@ -10,6 +10,10 @@ const createUser = async (data: UserCreate) => {
   await API_CLIENT.post('api/users', data)
 }
 
+const deleteUser = async (userId: User['id']) => {
+  await API_CLIENT.delete(`api/users/${userId}`)
+}
+
 export const useUsers = () =>
   useQuery({
     queryKey: ['users'],
@@ -21,6 +25,15 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: createUser,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
+  })
+}
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteUser,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   })
 }

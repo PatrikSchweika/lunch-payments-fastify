@@ -14,4 +14,15 @@ export const AuthContracts = {
       summary: 'Get auth user',
     },
   },
+  logout: {
+    method: 'POST',
+    url: '/api/auth/logout',
+    schema: {
+      response: {
+        401: API_ERROR_MESSAGE_SCHEMA,
+      },
+      tags: ['Auth'],
+      summary: 'Logout',
+    },
+  },
 }

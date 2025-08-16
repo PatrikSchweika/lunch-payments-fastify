@@ -22,6 +22,10 @@ const fetchLunchRecords = async () => {
   )
 }
 
+const deleteLunchRecord = async (lunchRecordId: LunchRecord['id']) => {
+  await API_CLIENT.delete(`api/lunchRecords/${lunchRecordId}`)
+}
+
 export const useUserLunchRecords = (userId: User['id']) =>
   useQuery({
     queryKey: ['users', userId, 'lunch-records'],
@@ -39,6 +43,18 @@ export const useCreateLunchRecord = () => {
 
   return useMutation({
     mutationFn: createLunchRecord,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['users'] })
+      await queryClient.invalidateQueries({ queryKey: ['lunch-records'] })
+    },
+  })
+}
+
+export const useDeleteLunchRecord = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteLunchRecord,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['users'] })
       await queryClient.invalidateQueries({ queryKey: ['lunch-records'] })

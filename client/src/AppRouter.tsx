@@ -3,7 +3,6 @@ import { HomePage } from './features/HomePage.tsx'
 import { AppLayout } from './AppLayout.tsx'
 import { UserDetailPage } from './features/users/UserDetailPage.tsx'
 import { useEffect } from 'react'
-import { AdminPage } from './features/admin/AdminPage.tsx'
 
 interface NoMatchProps {
   redirect: string
@@ -26,11 +25,6 @@ export const AppRouter = () => (
         <Route index element={<HomePage />} />
         <Route path="users/:userId" element={<UserDetailPage />} />
         <Route path="*" element={<NoMatch redirect="/" />} />
-      </Route>
-
-      <Route path="admin" element={<AppLayout />}>
-        <Route index element={<AdminPage />} />
-        <Route path="*" element={<NoMatch redirect="/admin" />} />
       </Route>
     </Routes>
   </BrowserRouter>
