@@ -5,9 +5,8 @@ import type {
 import { DATABASE } from '../../database/db.js'
 import { UserContracts } from './user-contracts.js'
 import { UserDb } from '../../database/models/user.js'
-import { User } from 'contracts/src/models/user.js'
 import { requireRole } from '../auth/basic-auth.js'
-import { AuthUserRole } from 'contracts/src/models/auth-user.js'
+import { AuthUserRole, User } from 'contracts'
 
 const mapUser = (user: UserDb, score: number): User => ({
   id: user.id,

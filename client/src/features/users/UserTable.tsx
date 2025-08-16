@@ -1,4 +1,4 @@
-import type { User } from 'contracts/src/models/user.ts'
+import type { User } from 'contracts'
 import { Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
 import { DeleteOutlined } from '@ant-design/icons'

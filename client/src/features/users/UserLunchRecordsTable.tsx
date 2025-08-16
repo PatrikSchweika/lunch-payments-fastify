@@ -1,6 +1,5 @@
 import { Table, type TableProps } from 'antd'
-import type { User } from 'contracts/src/models/user.ts'
-import type { LunchRecord } from 'contracts/src/models/lunch-record.ts'
+import type { User, LunchRecord } from 'contracts'
 import { formatDate } from '../../utils/format.ts'
 import { DeleteOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'

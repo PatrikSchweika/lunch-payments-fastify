@@ -4,7 +4,7 @@ import { AddLunchRecordForm } from './lunch-records/AddLunchRecordForm.tsx'
 import { App } from 'antd'
 import { CenteredSpin } from '../atoms/CenteredSpin.ts'
 import { useCreateLunchRecord } from './lunch-records/queries.ts'
-import type { LunchRecordCreate } from 'contracts/src/models/lunch-record.ts'
+import type { LunchRecordCreate } from 'contracts'
 import { useIsAdmin } from './auth/queries.ts'
 import { CreateUserForm } from './users/CreateUserForm.tsx'
 

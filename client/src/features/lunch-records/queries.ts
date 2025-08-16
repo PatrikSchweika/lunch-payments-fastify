@@ -1,9 +1,5 @@
-import type {
-  LunchRecord,
-  LunchRecordCreate,
-} from 'contracts/src/models/lunch-record.ts'
+import type { LunchRecord, LunchRecordCreate, User } from 'contracts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { User } from 'contracts/src/models/user.ts'
 import { API_CLIENT } from '../../setup/api-client.ts'
 
 const createLunchRecord = async (data: LunchRecordCreate) => {

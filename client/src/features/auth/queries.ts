@@ -1,5 +1,5 @@
 import { API_CLIENT } from '../../setup/api-client.ts'
-import { type AuthUser, AuthUserRole } from 'contracts/src/models/auth-user.ts'
+import { type AuthUser, AuthUserRole } from 'contracts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const fetchAuthUser = () => {

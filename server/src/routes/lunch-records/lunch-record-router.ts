@@ -5,7 +5,7 @@ import type {
 import { DATABASE } from '../../database/db.js'
 import { LunchRecordContracts } from './lunch-record-contracts.js'
 import { requireRole } from '../auth/basic-auth.js'
-import { AuthUserRole } from 'contracts/src/models/auth-user.js'
+import { AuthUserRole } from 'contracts'
 
 export const lunchRecordRouter: FastifyPluginCallbackZod = (
   fastify,

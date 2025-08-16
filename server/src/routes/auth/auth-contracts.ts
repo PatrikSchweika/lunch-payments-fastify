@@ -1,5 +1,4 @@
-import { AUTH_USER_SCHEMA } from 'contracts/src/models/auth-user.js'
-import { API_ERROR_MESSAGE_SCHEMA } from 'contracts/src/models/error.js'
+import { API_ERROR_MESSAGE_SCHEMA, AUTH_USER_SCHEMA } from 'contracts'
 
 export const AuthContracts = {
   getAuthUser: {

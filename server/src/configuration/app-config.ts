@@ -1,6 +1,6 @@
+import { AuthUserRole } from 'contracts'
 import dotenv from 'dotenv'
 import { z } from 'zod/v4'
-import { AuthUserRole } from 'contracts/src/models/auth-user.js'
 
 dotenv.config()
 

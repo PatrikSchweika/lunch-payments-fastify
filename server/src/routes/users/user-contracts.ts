@@ -1,9 +1,10 @@
-import { USER_CREATE_SCHEMA, USER_SCHEMA } from 'contracts/src/models/user.js'
-import { z } from 'zod/v4'
 import {
   API_ERROR_MESSAGE_SCHEMA,
   API_VALIDATION_ERROR_MESSAGE_SCHEMA,
-} from 'contracts/src/models/error.js'
+  USER_CREATE_SCHEMA,
+  USER_SCHEMA,
+} from 'contracts'
+import { z } from 'zod/v4'
 
 export const UserContracts = {
   getUsers: {

@@ -2,7 +2,11 @@
   "name": "contracts",
   "version": "1.0.0",
   "type": "module",
-  "description": "Contracts for the project",
+  "description": "Shared package for the project",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
   "scripts": {
     "lint": "eslint src",
     "format": "eslint --fix src",

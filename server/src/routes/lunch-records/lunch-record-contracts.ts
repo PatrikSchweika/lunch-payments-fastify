@@ -1,12 +1,10 @@
-import { z } from 'zod/v4'
-import {
-  LUNCH_RECORD_CREATE_SCHEMA,
-  LUNCH_RECORD_SCHEMA,
-} from 'contracts/src/models/lunch-record.js'
 import {
   API_ERROR_MESSAGE_SCHEMA,
   API_VALIDATION_ERROR_MESSAGE_SCHEMA,
-} from 'contracts/src/models/error.js'
+  LUNCH_RECORD_CREATE_SCHEMA,
+  LUNCH_RECORD_SCHEMA,
+} from 'contracts'
+import { z } from 'zod/v4'
 
 export const LunchRecordContracts = {
   getLunchRecords: {

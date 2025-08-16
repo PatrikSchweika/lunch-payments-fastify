@@ -1,8 +1,5 @@
 import { useForm } from 'react-hook-form'
-import {
-  USER_CREATE_SCHEMA,
-  type UserCreate,
-} from 'contracts/src/models/user.ts'
+import { USER_CREATE_SCHEMA, type UserCreate } from 'contracts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Form, Input, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'

@@ -2,9 +2,9 @@ import { Controller, useForm } from 'react-hook-form'
 import {
   LUNCH_RECORD_CREATE_SCHEMA,
   type LunchRecordCreate,
-} from 'contracts/src/models/lunch-record.ts'
+  type User,
+} from 'contracts'
 import { zodResolver } from '@hookform/resolvers/zod'
-import type { User } from 'contracts/src/models/user.ts'
 import { Button, DatePicker, Form, Input, Select, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'
 import dayjs from 'dayjs'

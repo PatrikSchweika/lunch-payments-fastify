@@ -1,4 +1,4 @@
-import type { User, UserCreate } from 'contracts/src/models/user.ts'
+import type { User, UserCreate } from 'contracts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { API_CLIENT } from '../../setup/api-client.ts'
 
