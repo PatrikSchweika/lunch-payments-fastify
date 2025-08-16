@@ -1,4 +1,4 @@
-import { Button, Flex, Layout } from 'antd'
+import { Button, Flex, Layout, Typography } from 'antd'
 import { Outlet } from 'react-router'
 import { useLogout } from './features/auth/queries.ts'
 
@@ -10,7 +10,16 @@ export const AppLayout = () => {
 
   return (
     <Layout style={{ minHeight: '100vh', padding: '0' }}>
-      <Layout.Header>
+      <Layout.Header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography.Title level={2} style={{ color: 'white' }}>
+          Lunch app
+        </Typography.Title>
         <Button onClick={() => logout()}>Logout</Button>
       </Layout.Header>
       <Layout.Content>
