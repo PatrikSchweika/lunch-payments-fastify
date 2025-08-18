@@ -1,11 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { APP_CONFIG } from '../../configuration/app-config.js'
+import fp from 'fastify-plugin'
+import fastifyBasicAuth from '@fastify/basic-auth'
 
 const USERS = [APP_CONFIG.user, APP_CONFIG.admin]
 
-export const AUTHENTICATE = { realm: 'Lunch app' }
+const authenticate = { realm: 'Lunch app' }
 
-export const validate = async (
+const validate = async (
   username: string,
   password: string,
   req: FastifyRequest,
@@ -25,6 +27,12 @@ export const validate = async (
     role: user.role,
   }
 }
+
+export const basicAuthPlugin = fp((fastify, _, done) => {
+  fastify.register(fastifyBasicAuth, { validate, authenticate })
+
+  done()
+})
 
 export const requireRole =
   (requiredRole: string) =>
