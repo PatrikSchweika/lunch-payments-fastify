@@ -54,7 +54,8 @@ app.register(lunchRecordRouter)
 
 if (APP_CONFIG.environment === Environment.Production) {
   app.register(fastifyStatic, {
-    root: path.join(path.resolve(), 'public'),
+    root: path.join(import.meta.dirname, '../public'),
+    wildcard: false,
   })
 
   app.get('/*', (_, reply) => {

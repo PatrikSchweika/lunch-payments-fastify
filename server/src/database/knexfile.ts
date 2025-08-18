@@ -1,9 +1,5 @@
 import type { Knex } from 'knex'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 interface KnexConfig {
   development: Knex.Config
@@ -14,7 +10,7 @@ const config: KnexConfig = {
   development: {
     client: 'better-sqlite3',
     connection: {
-      filename: path.resolve(__dirname, '../../development.sqlite'),
+      filename: path.resolve(import.meta.dirname, '../../development.sqlite'),
       timezone: 'utc',
     },
     migrations: {
@@ -26,7 +22,7 @@ const config: KnexConfig = {
   production: {
     client: 'better-sqlite3',
     connection: {
-      filename: path.resolve(__dirname, '../../production.sqlite'),
+      filename: path.resolve(import.meta.dirname, '../../production.sqlite'),
       timezone: 'utc',
     },
     migrations: {

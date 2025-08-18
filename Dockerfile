@@ -23,7 +23,8 @@ RUN pnpm build
 EXPOSE 3000
 
 #CMD ["pnpm", "run", "--filter", "server", "knex", "migrate:latest"]
-CMD ["pnpm", "start"]
+#CMD ["pnpm run --filter server knex migrate:latest && pnpm start"]
+CMD ["sh", "-c", "pnpm run --filter server knex migrate:latest && pnpm start"]
 
 #Production stage
 #FROM node:24-alpine AS production
