@@ -5,6 +5,7 @@ import {
   LUNCH_RECORD_SCHEMA,
 } from 'contracts'
 import { z } from 'zod/v4'
+import { ApiContract } from '../../types/api-contract.js'
 
 export const LunchRecordContracts = {
   getLunchRecords: {
@@ -72,4 +73,4 @@ export const LunchRecordContracts = {
       summary: 'Delete lunch record',
     },
   },
-}
+} satisfies ApiContract

@@ -5,6 +5,7 @@ import {
   USER_SCHEMA,
 } from 'contracts'
 import { z } from 'zod/v4'
+import { ApiContract } from '../../types/api-contract.js'
 
 export const UserContracts = {
   getUsers: {
@@ -73,4 +74,4 @@ export const UserContracts = {
       summary: 'Delete user',
     },
   },
-}
+} satisfies ApiContract

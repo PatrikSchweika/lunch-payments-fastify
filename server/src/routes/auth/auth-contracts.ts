@@ -1,4 +1,5 @@
 import { API_ERROR_MESSAGE_SCHEMA, AUTH_USER_SCHEMA } from 'contracts'
+import { ApiContract } from '../../types/api-contract.js'
 
 export const AuthContracts = {
   getAuthUser: {
@@ -24,4 +25,4 @@ export const AuthContracts = {
       summary: 'Logout',
     },
   },
-}
+} satisfies ApiContract
