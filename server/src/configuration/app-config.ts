@@ -1,6 +1,7 @@
 import { AuthUserRole } from 'contracts'
 import dotenv from 'dotenv'
 import { z } from 'zod/v4'
+import fp from 'fastify-plugin'
 
 dotenv.config()
 
@@ -41,7 +42,7 @@ if (!env.success) {
   process.exit(1)
 }
 
-export const APP_CONFIG: AppConfig = {
+const appConfig: AppConfig = {
   environment: env.data.NODE_ENV,
   port: env.data.PORT,
   host: env.data.HOST,
@@ -55,4 +56,10 @@ export const APP_CONFIG: AppConfig = {
     password: env.data.ADMIN_PASSWORD,
     role: AuthUserRole.Admin,
   },
-} as const
+}
+
+export const appConfigPlugin = fp((fastify, _, done) => {
+  fastify.decorate('appConfig', appConfig)
+
+  done()
+})

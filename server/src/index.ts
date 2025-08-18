@@ -11,7 +11,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 
-import { APP_CONFIG, Environment } from './configuration/app-config.js'
+import { appConfigPlugin, Environment } from './configuration/app-config.js'
 import { userRouter } from './routes/users/user-router.js'
 import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js'
 import { authRouter } from './routes/auth/auth-router.js'
@@ -41,6 +41,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
+await app.register(appConfigPlugin)
 app.register(knexPlugin)
 
 app.register(fastifySwaggerUI, {
@@ -52,7 +53,7 @@ app.register(authRouter)
 app.register(userRouter)
 app.register(lunchRecordRouter)
 
-if (APP_CONFIG.environment === Environment.Production) {
+if (app.appConfig.environment === Environment.Production) {
   app.register(fastifyStatic, {
     root: path.join(import.meta.dirname, '../public'),
     wildcard: false,
@@ -71,11 +72,14 @@ if (APP_CONFIG.environment === Environment.Production) {
 
 await app.ready()
 
-app.listen({ port: APP_CONFIG.port, host: APP_CONFIG.host }, (err, address) => {
-  if (err) {
-    console.error(err)
-    process.exit(1)
-  }
+app.listen(
+  { port: app.appConfig.port, host: app.appConfig.host },
+  (err, address) => {
+    if (err) {
+      console.error(err)
+      process.exit(1)
+    }
 
-  console.log(`Server listening at ${address}`)
-})
+    console.log(`Server listening at ${address}`)
+  },
+)

@@ -1,5 +1,6 @@
 import { Knex } from 'knex'
 import { AuthUser } from 'contracts'
+import { AppConfig } from '../configuration/app-config.js'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -7,5 +8,6 @@ declare module 'fastify' {
   }
   interface FastifyInstance {
     knex: Knex
+    appConfig: AppConfig
   }
 }
