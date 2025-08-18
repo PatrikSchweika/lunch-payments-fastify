@@ -57,7 +57,7 @@ if (APP_CONFIG.environment === Environment.Production) {
     root: path.join(path.resolve(), 'public'),
   })
 
-  app.get('/', (_, reply) => {
+  app.get('/*', (_, reply) => {
     return reply.sendFile('index.html')
   })
 } else {
