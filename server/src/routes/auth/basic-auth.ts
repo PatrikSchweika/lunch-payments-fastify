@@ -1,11 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify'
-import { APP_CONFIG, AuthUserConfig } from '../../configuration/app-config.js'
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user?: Omit<AuthUserConfig, 'password'>
-  }
-}
+import { APP_CONFIG } from '../../configuration/app-config.js'
 
 const USERS = [APP_CONFIG.user, APP_CONFIG.admin]
 

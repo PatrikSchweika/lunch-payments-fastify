@@ -17,6 +17,7 @@ import { lunchRecordRouter } from './routes/lunch-records/lunch-record-router.js
 import fastifyBasicAuth from '@fastify/basic-auth'
 import { AUTHENTICATE, validate } from './routes/auth/basic-auth.js'
 import { authRouter } from './routes/auth/auth-router.js'
+import { knexPlugin } from './database/knex-plugin.js'
 
 const app = fastify({
   logger: {
@@ -41,11 +42,14 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
+app.register(knexPlugin)
+
 app.register(fastifyBasicAuth, { validate, authenticate: AUTHENTICATE })
 
 app.register(fastifySwaggerUI, {
   routePrefix: '/documentation',
 })
+
 app.register(authRouter)
 app.register(userRouter)
 app.register(lunchRecordRouter)

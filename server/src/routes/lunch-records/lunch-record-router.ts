@@ -2,7 +2,6 @@ import type {
   FastifyPluginCallbackZod,
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { DATABASE } from '../../database/db.js'
 import { LunchRecordContracts } from './lunch-record-contracts.js'
 import { requireRole } from '../auth/basic-auth.js'
 import { AuthUserRole } from 'contracts'
@@ -16,11 +15,12 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     ...LunchRecordContracts.getLunchRecords,
     onRequest: fastify.basicAuth,
     handler: async () => {
-      const lunchRecordEntries = await DATABASE('lunchRecords').select('*')
+      const lunchRecordEntries = await fastify.knex('lunchRecords').select('*')
 
       return Promise.all(
         lunchRecordEntries.map(async entry => {
-          const consumers = await DATABASE('lunchConsumers')
+          const consumers = await fastify
+            .knex('lunchConsumers')
             .where({ lunchRecordId: entry.id })
             .select('consumerId')
 
@@ -41,26 +41,29 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     onRequest: fastify.basicAuth,
     handler: async (req, reply) => {
       const { userId } = req.params
-      const user = await DATABASE('users').where({ id: userId }).first()
+      const user = await fastify.knex('users').where({ id: userId }).first()
 
       if (!user) {
         return reply.notFound(`User with id ${userId} not found.`)
       }
 
-      const lunchConsumerEntries = await DATABASE('lunchConsumers')
+      const lunchConsumerEntries = await fastify
+        .knex('lunchConsumers')
         .select('*')
         .where({ consumerId: userId })
 
       const lunchConsumerRecords = await Promise.all(
         lunchConsumerEntries.map(async entry => {
-          return (await DATABASE('lunchRecords')
+          return (await fastify
+            .knex('lunchRecords')
             .select('*')
             .where({ id: entry.lunchRecordId })
             .first())!
         }),
       )
 
-      const lunchPayerEntries = await DATABASE('lunchRecords')
+      const lunchPayerEntries = await fastify
+        .knex('lunchRecords')
         .select('*')
         .where({ payerId: userId })
 
@@ -70,7 +73,8 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
       return Promise.all(
         lunchRecords.map(async record => {
-          const consumers = await DATABASE('lunchConsumers')
+          const consumers = await fastify
+            .knex('lunchConsumers')
             .where({ lunchRecordId: record.id })
             .select('consumerId')
 
@@ -92,7 +96,7 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     handler: async (req, reply) => {
       const { date, description, payerId, consumerIds } = req.body
 
-      const payer = await DATABASE('users').where({ id: payerId }).first()
+      const payer = await fastify.knex('users').where({ id: payerId }).first()
 
       const notFoundUsers: number[] = []
 
@@ -101,7 +105,8 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
       }
 
       for (const consumerId of consumerIds) {
-        const consumer = await DATABASE('users')
+        const consumer = await fastify
+          .knex('users')
           .where({ id: consumerId })
           .first()
 
@@ -116,7 +121,8 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
         )
       }
 
-      const lunchRecordDb = await DATABASE('lunchRecords')
+      const lunchRecordDb = await fastify
+        .knex('lunchRecords')
         .insert({
           date,
           description,
@@ -125,7 +131,7 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
         .returning('*')
 
       for (const consumerId of consumerIds) {
-        await DATABASE('lunchConsumers').insert({
+        await fastify.knex('lunchConsumers').insert({
           lunchRecordId: lunchRecordDb[0].id,
           consumerId,
         })
@@ -144,13 +150,16 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     handler: async (request, reply) => {
       const { id } = request.params
 
-      const lunchRecord = await DATABASE('lunchRecords').where({ id }).first()
+      const lunchRecord = await fastify
+        .knex('lunchRecords')
+        .where({ id })
+        .first()
 
       if (!lunchRecord) {
         return reply.notFound(`Lunch record with id ${id} not found.`)
       }
 
-      await DATABASE('lunchRecords').where({ id }).delete()
+      await fastify.knex('lunchRecords').where({ id }).delete()
 
       return reply.code(204).send()
     },

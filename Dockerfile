@@ -1,6 +1,8 @@
-FROM node:24-alpine AS build
-WORKDIR /app
+FROM node:24 AS base
 
+FROM base AS build
+
+WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -12,7 +14,7 @@ COPY server/package.json server/package.json
 COPY contracts/package.json contracts/package.json
 COPY client/package.json client/package.json
 
-RUN pnpm install -r --offline
+RUN pnpm install --offline
 
 COPY . .
 
@@ -20,6 +22,7 @@ RUN pnpm build
 
 EXPOSE 3000
 
+#CMD ["pnpm", "run", "--filter", "server", "knex", "migrate:latest"]
 CMD ["pnpm", "start"]
 
 #Production stage

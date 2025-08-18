@@ -2,7 +2,6 @@ import type {
   ZodTypeProvider,
   FastifyPluginCallbackZod,
 } from 'fastify-type-provider-zod'
-import { DATABASE } from '../../database/db.js'
 import { UserContracts } from './user-contracts.js'
 import { UserDb } from '../../database/models/user.js'
 import { requireRole } from '../auth/basic-auth.js'
@@ -14,34 +13,34 @@ const mapUser = (user: UserDb, score: number): User => ({
   score,
 })
 
-const calculateScore = async (user: UserDb) => {
-  const paidLunches = await DATABASE('lunchRecords').where({
-    payerId: user.id,
-  })
-
-  const paidForConsumers = (
-    await Promise.all(
-      paidLunches.map(async paidLunch =>
-        DATABASE('lunchConsumers').where({
-          lunchRecordId: paidLunch.id,
-        }),
-      ),
-    )
-  ).flat()
-
-  const consumedLunches = await DATABASE('lunchConsumers').where({
-    consumerId: user.id,
-  })
-
-  return paidForConsumers.length - consumedLunches.length
-}
-
 export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
+  const calculateScore = async (user: UserDb) => {
+    const paidLunches = await fastify.knex('lunchRecords').where({
+      payerId: user.id,
+    })
+
+    const paidForConsumers = (
+      await Promise.all(
+        paidLunches.map(async paidLunch =>
+          fastify.knex('lunchConsumers').where({
+            lunchRecordId: paidLunch.id,
+          }),
+        ),
+      )
+    ).flat()
+
+    const consumedLunches = await fastify.knex('lunchConsumers').where({
+      consumerId: user.id,
+    })
+
+    return paidForConsumers.length - consumedLunches.length
+  }
+
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...UserContracts.getUsers,
     onRequest: fastify.basicAuth,
     handler: async () => {
-      const users = await DATABASE('users').select('*')
+      const users = await fastify.knex('users').select('*')
 
       return Promise.all(
         users.map(async user => {
@@ -59,7 +58,7 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
     handler: async (req, reply) => {
       const { id } = req.params
 
-      const user = await DATABASE('users').where({ id }).first()
+      const user = await fastify.knex('users').where({ id }).first()
 
       if (!user) {
         return reply.notFound(`User with id ${id} not found.`)
@@ -77,13 +76,13 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
     handler: async (req, reply) => {
       const { name } = req.body
 
-      const existingUser = await DATABASE('users').where({ name }).first()
+      const existingUser = await fastify.knex('users').where({ name }).first()
 
       if (existingUser) {
         return reply.conflict(`User with name ${name} already exists.`)
       }
 
-      const data = await DATABASE('users').insert({ name }).returning('*')
+      const data = await fastify.knex('users').insert({ name }).returning('*')
 
       return mapUser(data[0], 0)
     },
@@ -95,13 +94,13 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
     handler: async (request, reply) => {
       const { id } = request.params
 
-      const user = await DATABASE('users').where({ id }).first()
+      const user = await fastify.knex('users').where({ id }).first()
 
       if (!user) {
         return reply.notFound(`User with id ${id} not found.`)
       }
 
-      await DATABASE('users').where({ id }).delete()
+      await fastify.knex('users').where({ id }).delete()
 
       return reply.code(204).send()
     },
