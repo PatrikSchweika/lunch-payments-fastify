@@ -1,8 +1,9 @@
-import { Table, type TableProps } from 'antd'
+import { App, Table, type TableProps, Typography } from 'antd'
 import type { User, LunchRecord } from 'contracts'
 import { formatDate } from '../../utils/format.ts'
 import { DeleteOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
+import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
 
 interface DataType {
   key: number
@@ -15,14 +16,26 @@ interface DataType {
 
 const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
   {
+    title: 'Payer - Consumers',
+    key: 'payerAndConsumers',
+    responsive: ['xs'],
+    render: (_, data) => (
+      <Typography>
+        <strong>{data.payer}</strong> - {data.consumers}
+      </Typography>
+    ),
+  },
+  {
     title: 'Payer',
     dataIndex: 'payer',
     key: 'payer',
+    responsive: ['sm'],
   },
   {
     title: 'Consumers',
     dataIndex: 'consumers',
     key: 'consumers',
+    responsive: ['sm'],
   },
   {
     title: 'Description',
@@ -58,19 +71,44 @@ export const UserLunchRecordsTable = ({
   lunchRecords,
   onDelete,
 }: UserLunchRecordsTableProps) => {
-  const dataSource = lunchRecords.map(lunchRecord => ({
-    key: lunchRecord.id,
-    payer:
-      users.find(user => user.id === lunchRecord.payerId)?.name ?? 'Unknown',
-    consumers: users
+  const dataSource = lunchRecords.map(lunchRecord => {
+    const payer =
+      users.find(user => user.id === lunchRecord.payerId)?.name ?? 'Unknown'
+
+    const consumers = users
       .filter(user => lunchRecord.consumerIds.includes(user.id))
       .map(user => user.name)
-      .join(', '),
-    score:
-      lunchRecord.payerId === user.id ? lunchRecord.consumerIds.length : -1,
-    date: lunchRecord.date,
-    description: lunchRecord.description,
-  }))
+      .join(', ')
+
+    return {
+      key: lunchRecord.id,
+      payer,
+      consumers,
+      score:
+        lunchRecord.payerId === user.id ? lunchRecord.consumerIds.length : -1,
+      date: lunchRecord.date,
+      description: lunchRecord.description,
+    }
+  })
+
+  const { modal } = App.useApp()
+
+  const handleDelete = async (lunchRecord: DataType) => {
+    const confirmed = await modal.confirm({
+      title: 'Delete confirmation',
+      content: (
+        <Typography>
+          Are you sure you want to delete lunch record{' '}
+          <strong>{lunchRecord.description}</strong> on{' '}
+          {formatDate(lunchRecord.date)}?
+        </Typography>
+      ),
+    })
+
+    if (confirmed) {
+      onDelete?.(lunchRecord.key)
+    }
+  }
 
   const columns = !onDelete
     ? DEFAULT_COLUMNS
@@ -80,18 +118,20 @@ export const UserLunchRecordsTable = ({
           title: 'Actions',
           key: 'actions',
           render: (_: unknown, record: DataType) => (
-            <DeleteOutlined onClick={() => onDelete(record.key)} />
+            <DeleteOutlined onClick={() => handleDelete(record)} />
           ),
         },
       ]
 
+  const breakpoints = useBreakpoint()
+
   return (
     <Table
+      size={breakpoints['md'] ? 'large' : 'small'}
       columns={columns}
       dataSource={dataSource}
       bordered
       pagination={false}
-      style={{ minWidth: '600px' }}
     />
   )
 }

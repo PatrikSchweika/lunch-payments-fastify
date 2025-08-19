@@ -63,7 +63,7 @@ export const AddLunchRecordForm = ({
   )
 
   return (
-    <Form onFinish={handleSubmit(onSubmitInner)} style={{ width: '250px' }}>
+    <Form onFinish={handleSubmit(onSubmitInner)}>
       <Typography.Title level={3} style={{ textAlign: 'center' }}>
         Add Lunch Record
       </Typography.Title>
@@ -91,7 +91,7 @@ export const AddLunchRecordForm = ({
       </Form.Item>
 
       <FormItem control={control} name={'description'}>
-        <Input placeholder="Description" />
+        <Input.TextArea placeholder="Description" autoSize />
       </FormItem>
 
       <Form.Item

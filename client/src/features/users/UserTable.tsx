@@ -1,7 +1,8 @@
 import type { User } from 'contracts'
-import { Table, type TableProps } from 'antd'
+import { App, Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
 import { DeleteOutlined } from '@ant-design/icons'
+import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
 
 interface DataType {
   key: number
@@ -38,6 +39,19 @@ export const UserTable = ({ users, onDelete }: UserTableProps) => {
     score: user.score,
   }))
 
+  const { modal } = App.useApp()
+
+  const handleDelete = async (user: DataType) => {
+    const confirmed = await modal.confirm({
+      title: 'Delete confirmation',
+      content: `Are you sure you want to archive user ${user.name}?`,
+    })
+
+    if (confirmed) {
+      onDelete?.(user.key)
+    }
+  }
+
   const columns = !onDelete
     ? DEFAULT_COLUMNS
     : [
@@ -46,18 +60,20 @@ export const UserTable = ({ users, onDelete }: UserTableProps) => {
           title: 'Actions',
           key: 'actions',
           render: (_: unknown, user: DataType) => (
-            <DeleteOutlined onClick={() => onDelete(user.key)} />
+            <DeleteOutlined title="Delete" onClick={() => handleDelete(user)} />
           ),
         },
       ]
 
+  const breakpoints = useBreakpoint()
+
   return (
     <Table
+      size={breakpoints['md'] ? 'large' : 'small'}
       columns={columns}
       dataSource={dataSource}
       bordered
       pagination={false}
-      style={{ minWidth: '400px' }}
     />
   )
 }

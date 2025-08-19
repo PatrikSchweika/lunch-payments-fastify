@@ -1,6 +1,6 @@
-import { Breadcrumb, Button, Flex, Layout, Space, Typography } from 'antd'
+import { Breadcrumb, Button, Flex, Layout, Typography } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
-import { useLogout } from './features/auth/queries.ts'
+import { useIsAdmin, useLogout } from './features/auth/queries.ts'
 import { HomeOutlined } from '@ant-design/icons'
 
 const HOME_BREADCRUMB_ITEM = {
@@ -33,29 +33,32 @@ export const AppLayout = () => {
 
   const breadCrumbItems = [HOME_BREADCRUMB_ITEM, ...routeBreadcrumbItems]
 
+  const isAdmin = useIsAdmin()
+
   return (
     <Layout style={{ minHeight: '100vh', padding: '0' }}>
       <Layout.Header
         style={{
           display: 'flex',
           alignItems: 'center',
-          // justifyContent: 'space-between'
+          justifyContent: 'space-between',
         }}
       >
-        <Space size={50}>
-          <Typography.Title level={2} style={{ color: 'white', margin: '0' }}>
-            Lunch app
-          </Typography.Title>
-        </Space>
+        <Typography.Title level={2} style={{ color: 'white', margin: '0' }}>
+          Lunch app {isAdmin ? '- admin' : ''}
+        </Typography.Title>
 
-        <Flex flex={1} justify="flex-end">
-          <Button onClick={() => logout()}>Logout</Button>
-        </Flex>
+        <Button style={{ color: 'white' }} type="link" onClick={() => logout()}>
+          Logout
+        </Button>
       </Layout.Header>
       <Layout.Content>
-        <Flex vertical style={{ padding: '20px 0 0 20px' }}>
-          <Breadcrumb items={breadCrumbItems} />
-          <Flex gap={100} align="center" justify="center">
+        <Flex vertical gap={10}>
+          <Breadcrumb
+            style={{ padding: '16px 0 0 16px' }}
+            items={breadCrumbItems}
+          />
+          <Flex justify="center" style={{ padding: '16px' }}>
             <Outlet />
           </Flex>
         </Flex>
