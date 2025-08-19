@@ -2,6 +2,9 @@ packages:
   - server
   - client
   - contracts
-
 onlyBuiltDependencies:
   - better-sqlite3
+syncInjectedDepsAfterScripts:
+  - build
+injectWorkspacePackages: true
+

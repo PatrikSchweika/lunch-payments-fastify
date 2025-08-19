@@ -10,7 +10,8 @@
 		"dev": "tsx --watch src/index.ts",
 		"start": "node dist/index.js",
 		"build": "tsc --outDir dist",
-		"knex": "tsx --env-file .env ./node_modules/knex/bin/cli.js --knexfile src/database/knexfile.ts"
+		"knex": "tsx --env-file .env ./node_modules/knex/bin/cli.js --knexfile src/database/knexfile.ts",
+        "knex:prod": "node ./node_modules/knex/bin/cli.js --knexfile dist/database/knexfile.js"
 	},
 	"keywords": [],
 	"author": "",

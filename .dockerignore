@@ -1,5 +1,7 @@
 **/node_modules
 **/dist
+server/public
 .gitignore
 .git
+**/*.env
 **/*.sqlite
