@@ -23,7 +23,7 @@ export const AppRouter = () => (
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="users/:userId" element={<UserDetailPage />} />
+        <Route path="/users/:userId" element={<UserDetailPage />} />
         <Route path="*" element={<NoMatch redirect="/" />} />
       </Route>
     </Routes>
