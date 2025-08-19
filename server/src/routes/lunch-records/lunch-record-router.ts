@@ -104,6 +104,10 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
         notFoundUsers.push(payerId)
       }
 
+      if (payer?.archivedAt != null) {
+        return reply.badRequest(`User with id ${payerId} is archived.`)
+      }
+
       for (const consumerId of consumerIds) {
         const consumer = await fastify
           .knex('users')
@@ -112,6 +116,10 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
         if (!consumer) {
           notFoundUsers.push(consumerId)
+        }
+
+        if (consumer?.archivedAt != null) {
+          return reply.badRequest(`User with id ${payerId} is archived.`)
         }
       }
 
