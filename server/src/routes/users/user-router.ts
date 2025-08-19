@@ -39,8 +39,18 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
   fastify.withTypeProvider<ZodTypeProvider>().route({
     ...UserContracts.getUsers,
     onRequest: fastify.basicAuth,
-    handler: async () => {
-      const users = await fastify.knex('users').select('*')
+    handler: async req => {
+      const { filter } = req.query
+
+      let users: UserDb[]
+
+      if (filter === 'archived') {
+        users = await fastify.knex('users').whereNotNull('archivedAt')
+      } else if (filter === 'active') {
+        users = await fastify.knex('users').whereNull('archivedAt')
+      } else {
+        users = await fastify.knex('users')
+      }
 
       return Promise.all(
         users.map(async user => {
@@ -89,7 +99,30 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
   })
 
   fastify.withTypeProvider<ZodTypeProvider>().route({
-    ...UserContracts.deleteUser,
+    ...UserContracts.updateUser,
+    onRequest: [fastify.basicAuth, requireRole(AuthUserRole.Admin)],
+    handler: async (req, reply) => {
+      const { name } = req.body
+      const { id } = req.params
+
+      const existingUser = await fastify.knex('users').where({ id }).first()
+
+      if (!existingUser) {
+        return reply.notFound(`User with id ${id} not found.`)
+      }
+
+      await fastify.knex('users').update({ name }).where({ id })
+
+      const updatedUser = (await fastify.knex('users').where({ id }).first())!
+
+      const score = await calculateScore(updatedUser)
+
+      return mapUser(updatedUser, score)
+    },
+  })
+
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    ...UserContracts.archiveUser,
     onRequest: [fastify.basicAuth, requireRole(AuthUserRole.Admin)],
     handler: async (request, reply) => {
       const { id } = request.params
@@ -100,7 +133,10 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
         return reply.notFound(`User with id ${id} not found.`)
       }
 
-      await fastify.knex('users').where({ id }).delete()
+      await fastify
+        .knex('users')
+        .update({ archivedAt: new Date().toISOString() })
+        .where({ id })
 
       return reply.code(204).send()
     },

@@ -12,6 +12,9 @@ export const UserContracts = {
     method: 'GET',
     url: '/api/users',
     schema: {
+      querystring: z.object({
+        filter: z.enum(['all', 'active', 'archived']).default('all'),
+      }),
       response: {
         200: z.array(USER_SCHEMA),
         401: API_ERROR_MESSAGE_SCHEMA,
@@ -39,6 +42,26 @@ export const UserContracts = {
     },
   },
 
+  updateUser: {
+    method: 'PUT',
+    url: '/api/users/:id',
+    schema: {
+      params: z.object({
+        id: z.coerce.number(),
+      }),
+      body: USER_CREATE_SCHEMA,
+      response: {
+        200: USER_SCHEMA,
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
+        403: API_ERROR_MESSAGE_SCHEMA,
+        409: API_ERROR_MESSAGE_SCHEMA,
+      },
+      tags: ['Users'],
+      summary: 'Update user',
+    },
+  },
+
   createUser: {
     method: 'POST',
     url: '/api/users',
@@ -56,7 +79,7 @@ export const UserContracts = {
     },
   },
 
-  deleteUser: {
+  archiveUser: {
     method: 'DELETE',
     url: '/api/users/:id',
     schema: {
@@ -71,7 +94,7 @@ export const UserContracts = {
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Users'],
-      summary: 'Delete user',
+      summary: 'Archive user',
     },
   },
 } satisfies ApiContract

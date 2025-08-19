@@ -3,4 +3,5 @@ export interface UserDb {
   name: string
   createdAt: string
   updatedAt: string
+  archivedAt?: string
 }
