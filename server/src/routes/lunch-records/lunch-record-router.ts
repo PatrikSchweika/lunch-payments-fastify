@@ -15,7 +15,7 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
     ...LunchRecordContracts.getLunchRecords,
     onRequest: fastify.basicAuth,
     handler: async () => {
-      const lunchRecordEntries = await fastify.knex('lunchRecords').select('*')
+      const lunchRecordEntries = await fastify.knex('lunchRecords')
 
       return Promise.all(
         lunchRecordEntries.map(async entry => {
@@ -49,14 +49,12 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
       const lunchConsumerEntries = await fastify
         .knex('lunchConsumers')
-        .select('*')
         .where({ consumerId: userId })
 
       const lunchConsumerRecords = await Promise.all(
         lunchConsumerEntries.map(async entry => {
           return (await fastify
             .knex('lunchRecords')
-            .select('*')
             .where({ id: entry.lunchRecordId })
             .first())!
         }),
@@ -64,7 +62,6 @@ export const lunchRecordRouter: FastifyPluginCallbackZod = (
 
       const lunchPayerEntries = await fastify
         .knex('lunchRecords')
-        .select('*')
         .where({ payerId: userId })
 
       const lunchRecords = [...lunchConsumerRecords, ...lunchPayerEntries].sort(
