@@ -10,6 +10,7 @@ import { AuthUserRole, User } from 'contracts'
 const mapUser = (user: UserDb, score: number): User => ({
   id: user.id,
   name: user.name,
+  archivedAt: user?.archivedAt ?? undefined,
   score,
 })
 

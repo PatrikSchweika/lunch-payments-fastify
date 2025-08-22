@@ -10,6 +10,7 @@ interface DataType {
   payer: string
   consumers: string
   date: string
+  archivedAt?: string
   description: string
   score: number
 }
@@ -20,9 +21,7 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
     key: 'payerAndConsumers',
     responsive: ['xs'],
     render: (_, data) => (
-      <Typography>
-        <strong>{data.payer}</strong> - {data.consumers}
-      </Typography>
+      <Typography>{data.payer} - {data.consumers}</Typography>
     ),
   },
   {
@@ -118,7 +117,7 @@ export const UserLunchRecordsTable = ({
           title: 'Actions',
           key: 'actions',
           render: (_: unknown, record: DataType) => (
-            <DeleteOutlined onClick={() => handleDelete(record)} />
+            !record.archivedAt && <DeleteOutlined onClick={() => handleDelete(record)} />
           ),
         },
       ]

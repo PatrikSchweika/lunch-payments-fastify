@@ -1,4 +1,4 @@
-import { useCreateUser, useDeleteUser, useUsers } from './users/queries.ts'
+import { useCreateUser, useArchiveUser, useUsers } from './users/queries.ts'
 import { UserTable } from './users/UserTable.tsx'
 import { AddLunchRecordForm } from './lunch-records/AddLunchRecordForm.tsx'
 import { App, Col, Row } from 'antd'
@@ -13,9 +13,9 @@ export const HomePage = () => {
   const { message } = App.useApp()
 
   const isAdmin = useIsAdmin()
-  const { data: users, isPending } = useUsers()
+  const { data: users, isPending } = useUsers(isAdmin ? 'all' : 'active')
   const { mutateAsync: createLunchRecord } = useCreateLunchRecord()
-  const { mutate: deleteUser } = useDeleteUser()
+  const { mutate: archiveUser } = useArchiveUser()
   const { mutate: createUser } = useCreateUser()
 
   const handleLunchRecordSubmit = async (data: LunchRecordCreate) => {
@@ -41,7 +41,7 @@ export const HomePage = () => {
       <Col xs={24} md={colSpans[0]}>
         <UserTable
           users={users ?? []}
-          onDelete={isAdmin ? deleteUser : undefined}
+          onDelete={isAdmin ? archiveUser : undefined}
         />
       </Col>
 
