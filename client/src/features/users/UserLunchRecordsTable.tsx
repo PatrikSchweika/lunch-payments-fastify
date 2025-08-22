@@ -21,7 +21,9 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
     key: 'payerAndConsumers',
     responsive: ['xs'],
     render: (_, data) => (
-      <Typography>{data.payer} - {data.consumers}</Typography>
+      <Typography>
+        {data.payer} - {data.consumers}
+      </Typography>
     ),
   },
   {
@@ -116,9 +118,10 @@ export const UserLunchRecordsTable = ({
         {
           title: 'Actions',
           key: 'actions',
-          render: (_: unknown, record: DataType) => (
-            !record.archivedAt && <DeleteOutlined onClick={() => handleDelete(record)} />
-          ),
+          render: (_: unknown, record: DataType) =>
+            !record.archivedAt && (
+              <DeleteOutlined onClick={() => handleDelete(record)} />
+            ),
         },
       ]
 

@@ -1,19 +1,65 @@
 import { useCreateUser, useArchiveUser, useUsers } from './users/queries.ts'
 import { UserTable } from './users/UserTable.tsx'
 import { AddLunchRecordForm } from './lunch-records/AddLunchRecordForm.tsx'
-import { App, Col, Row } from 'antd'
+import { App, Col, Row, Space, Switch } from 'antd'
 import { CenteredSpin } from '../atoms/CenteredSpin.ts'
 import { useCreateLunchRecord } from './lunch-records/queries.ts'
 import type { LunchRecordCreate } from 'contracts'
 import { useIsAdmin } from './auth/queries.ts'
 import { CreateUserForm } from './users/CreateUserForm.tsx'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
+import { useState } from 'react'
 
 export const HomePage = () => {
+  const isAdmin = useIsAdmin()
+
+  return isAdmin ? <AdminHomePage /> : <UserHomePage />
+}
+
+const UserHomePage = () => {
   const { message } = App.useApp()
 
-  const isAdmin = useIsAdmin()
-  const { data: users, isPending } = useUsers(isAdmin ? 'all' : 'active')
+  const { data: activeUsers, isPending } = useUsers('active')
+
+  const { mutateAsync: createLunchRecord } = useCreateLunchRecord()
+
+  const handleLunchRecordSubmit = async (data: LunchRecordCreate) => {
+    await createLunchRecord(data)
+    await message.success('Lunch record added 🍔')
+  }
+
+  const breakpoints = useBreakpoint()
+
+  if (isPending) {
+    return <CenteredSpin size="large" />
+  }
+
+  return (
+    <Row
+      gutter={breakpoints['md'] ? [32, 0] : 0}
+      style={{ width: '100%', maxWidth: '800px' }}
+    >
+      <Col xs={24} md={13}>
+        <UserTable users={activeUsers ?? []} />
+      </Col>
+
+      <Col xs={24} md={11}>
+        <AddLunchRecordForm
+          users={activeUsers ?? []}
+          onSubmit={handleLunchRecordSubmit}
+        />
+      </Col>
+    </Row>
+  )
+}
+
+const AdminHomePage = () => {
+  const { message } = App.useApp()
+
+  const { data: activeUsers, isPending } = useUsers('active')
+  const { data: archivedUsers } = useUsers('archived')
+  const [showActiveUsers, setShowActiveUsers] = useState(true)
+
   const { mutateAsync: createLunchRecord } = useCreateLunchRecord()
   const { mutate: archiveUser } = useArchiveUser()
   const { mutate: createUser } = useCreateUser()
@@ -29,34 +75,37 @@ export const HomePage = () => {
     return <CenteredSpin size="large" />
   }
 
-  const colSpans = isAdmin ? [9, 8, 7] : [13, 11]
-
-  const maxWidth = isAdmin ? '1200px' : '800px'
-
   return (
     <Row
       gutter={breakpoints['md'] ? [32, 0] : 0}
-      style={{ width: '100%', maxWidth }}
+      style={{ width: '100%', maxWidth: '1200px' }}
     >
-      <Col xs={24} md={colSpans[0]}>
-        <UserTable
-          users={users ?? []}
-          onDelete={isAdmin ? archiveUser : undefined}
-        />
+      <Col xs={24} md={9}>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Switch
+            checked={showActiveUsers}
+            onChange={val => setShowActiveUsers(val)}
+            checkedChildren={'Active users'}
+            unCheckedChildren={'Archived users'}
+          />
+          <UserTable
+            users={(showActiveUsers ? activeUsers : archivedUsers) ?? []}
+            archivedUsers={!showActiveUsers}
+            onArchive={archiveUser}
+          />
+        </Space>
       </Col>
 
-      <Col xs={24} md={colSpans[1]}>
+      <Col xs={24} md={8}>
         <AddLunchRecordForm
-          users={users ?? []}
+          users={activeUsers ?? []}
           onSubmit={handleLunchRecordSubmit}
         />
       </Col>
 
-      {isAdmin && (
-        <Col xs={24} md={colSpans[2]}>
-          <CreateUserForm onSubmit={createUser} />
-        </Col>
-      )}
+      <Col xs={24} md={7}>
+        <CreateUserForm onSubmit={createUser} />
+      </Col>
     </Row>
   )
 }

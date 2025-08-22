@@ -30,8 +30,8 @@ export const LunchRecordContracts = {
       }),
       response: {
         200: z.array(LUNCH_RECORD_SCHEMA),
-        401: API_ERROR_MESSAGE_SCHEMA,
         400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],
@@ -46,8 +46,8 @@ export const LunchRecordContracts = {
       body: LUNCH_RECORD_CREATE_SCHEMA,
       response: {
         201: LUNCH_RECORD_SCHEMA,
-        401: API_ERROR_MESSAGE_SCHEMA,
         400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],
@@ -64,9 +64,9 @@ export const LunchRecordContracts = {
       }),
       response: {
         204: z.void(),
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
         401: API_ERROR_MESSAGE_SCHEMA,
         403: API_ERROR_MESSAGE_SCHEMA,
-        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
         404: API_ERROR_MESSAGE_SCHEMA,
       },
       tags: ['Lunch records'],

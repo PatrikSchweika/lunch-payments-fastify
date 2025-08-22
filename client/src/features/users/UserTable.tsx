@@ -4,7 +4,6 @@ import { Link } from 'react-router'
 import { DeleteOutlined } from '@ant-design/icons'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
 import { useMemo } from 'react'
-import { useIsAdmin } from '../auth/queries.ts'
 import { formatDate } from '../../utils/format.ts'
 
 interface DataType {
@@ -33,20 +32,23 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
 
 interface UserTableProps {
   users: User[]
-  onDelete?: (userId: number) => void
+  onArchive?: (userId: number) => void
+  archivedUsers?: boolean
 }
 
-export const UserTable = ({ users, onDelete }: UserTableProps) => {
+export const UserTable = ({
+  users,
+  onArchive,
+  archivedUsers,
+}: UserTableProps) => {
   const dataSource = users.map(user => ({
     key: user.id,
     name: user.name,
     score: user.score,
-    archivedAt: user.archivedAt
+    archivedAt: user.archivedAt,
   }))
 
   const { modal } = App.useApp()
-
-  const isAdmin = useIsAdmin()
 
   const handleDelete = async (user: DataType) => {
     const confirmed = await modal.confirm({
@@ -55,33 +57,38 @@ export const UserTable = ({ users, onDelete }: UserTableProps) => {
     })
 
     if (confirmed) {
-      onDelete?.(user.key)
+      onArchive?.(user.key)
     }
   }
 
   const columns = useMemo(() => {
     const cols = [...DEFAULT_COLUMNS]
 
-    if (isAdmin) {
+    if (archivedUsers) {
       cols.push({
         title: 'Archived at',
         key: 'archivedAt',
-        render: (_: unknown, record: DataType) => record.archivedAt ? formatDate(record.archivedAt) : '',
+        render: (_: unknown, record: DataType) =>
+          record.archivedAt ? formatDate(record.archivedAt) : '',
       })
     }
 
-    if (onDelete) {
+    if (!archivedUsers && onArchive) {
       cols.push({
         title: 'Actions',
         key: 'actions',
-        render: (_: unknown, record: DataType) => (
-          !record.archivedAt && <DeleteOutlined onClick={() => handleDelete(record)} />
-        ),
+        render: (_: unknown, record: DataType) =>
+          !record.archivedAt && (
+            <DeleteOutlined
+              title="Archive"
+              onClick={() => handleDelete(record)}
+            />
+          ),
       })
     }
 
     return cols
-  }, [onDelete, isAdmin])
+  }, [onArchive, archivedUsers])
 
   const breakpoints = useBreakpoint()
 

@@ -5,7 +5,9 @@ import { API_CLIENT } from '../../setup/api-client.ts'
 type UserFilter = 'all' | 'active' | 'archived'
 
 const fetchUsers = async (filter: UserFilter) => {
-  return await API_CLIENT.get<User[]>('api/users', { params: { filter }}).then(res => res.data)
+  return await API_CLIENT.get<User[]>('api/users', { params: { filter } }).then(
+    res => res.data,
+  )
 }
 
 const createUser = async (data: UserCreate) => {

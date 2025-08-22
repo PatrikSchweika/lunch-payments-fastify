@@ -25,7 +25,7 @@ interface UserPageInnerProps {
 }
 
 const UserPageInner = ({ userId }: UserPageInnerProps) => {
-  const { data: users, isPending } = useUsers()
+  const { data: users, isPending } = useUsers('all')
   const { data: userLunchRecords } = useUserLunchRecords(userId)
 
   const isAdmin = useIsAdmin()

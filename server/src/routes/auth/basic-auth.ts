@@ -38,6 +38,5 @@ export const requireRole =
   async (req: FastifyRequest, reply: FastifyReply) => {
     if (req.user?.role !== requiredRole) {
       reply.forbidden('Insufficient permissions')
-      return
     }
   }
