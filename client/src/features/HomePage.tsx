@@ -4,7 +4,7 @@ import { AddLunchRecordForm } from './lunch-records/AddLunchRecordForm.tsx'
 import { App, Col, Row, Space, Switch } from 'antd'
 import { CenteredSpin } from '../atoms/CenteredSpin.ts'
 import { useCreateLunchRecord } from './lunch-records/queries.ts'
-import type { LunchRecordCreate } from 'contracts'
+import type { LunchRecordCreate, User } from 'contracts'
 import { useIsAdmin } from './auth/queries.ts'
 import { CreateUserForm } from './users/CreateUserForm.tsx'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
@@ -54,7 +54,7 @@ const UserHomePage = () => {
 }
 
 const AdminHomePage = () => {
-  const { message } = App.useApp()
+  const { message, modal } = App.useApp()
 
   const { data: activeUsers, isPending } = useUsers('active')
   const { data: archivedUsers } = useUsers('archived')
@@ -67,6 +67,17 @@ const AdminHomePage = () => {
   const handleLunchRecordSubmit = async (data: LunchRecordCreate) => {
     await createLunchRecord(data)
     await message.success('Lunch record added 🍔')
+  }
+
+  const handleArchiveUser = async (user: User) => {
+    const confirmed = await modal.confirm({
+      title: 'Delete confirmation',
+      content: `Are you sure you want to archive ${user.name}?`,
+    })
+
+    if (confirmed) {
+      archiveUser(user.id)
+    }
   }
 
   const breakpoints = useBreakpoint()
@@ -91,7 +102,7 @@ const AdminHomePage = () => {
           <UserTable
             users={(showActiveUsers ? activeUsers : archivedUsers) ?? []}
             archivedUsers={!showActiveUsers}
-            onArchive={archiveUser}
+            onArchive={handleArchiveUser}
           />
         </Space>
       </Col>

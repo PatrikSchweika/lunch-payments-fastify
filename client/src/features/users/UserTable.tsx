@@ -1,5 +1,5 @@
 import type { User } from 'contracts'
-import { App, Table, type TableProps } from 'antd'
+import { Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
 import { DeleteOutlined } from '@ant-design/icons'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
@@ -11,6 +11,7 @@ interface DataType {
   name: string
   score: number
   archivedAt?: string
+  user: User
 }
 
 const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
@@ -32,7 +33,7 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
 
 interface UserTableProps {
   users: User[]
-  onArchive?: (userId: number) => void
+  onArchive?: (user: User) => void
   archivedUsers?: boolean
 }
 
@@ -46,20 +47,8 @@ export const UserTable = ({
     name: user.name,
     score: user.score,
     archivedAt: user.archivedAt,
+    user: user,
   }))
-
-  const { modal } = App.useApp()
-
-  const handleDelete = async (user: DataType) => {
-    const confirmed = await modal.confirm({
-      title: 'Delete confirmation',
-      content: `Are you sure you want to archive user ${user.name}?`,
-    })
-
-    if (confirmed) {
-      onArchive?.(user.key)
-    }
-  }
 
   const columns = useMemo(() => {
     const cols = [...DEFAULT_COLUMNS]
@@ -81,7 +70,7 @@ export const UserTable = ({
           !record.archivedAt && (
             <DeleteOutlined
               title="Archive"
-              onClick={() => handleDelete(record)}
+              onClick={() => onArchive?.(record.user)}
             />
           ),
       })

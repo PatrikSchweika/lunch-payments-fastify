@@ -1,4 +1,4 @@
-import { App, Table, type TableProps, Typography } from 'antd'
+import { Table, type TableProps, Typography } from 'antd'
 import type { User, LunchRecord } from 'contracts'
 import { formatDate } from '../../utils/format.ts'
 import { DeleteOutlined } from '@ant-design/icons'
@@ -9,10 +9,11 @@ interface DataType {
   key: number
   payer: string
   consumers: string
-  date: string
-  archivedAt?: string
-  description: string
   score: number
+  date: string
+  description: string
+
+  lunchRecord: LunchRecord
 }
 
 const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
@@ -63,7 +64,7 @@ interface UserLunchRecordsTableProps {
   user: User
   lunchRecords: LunchRecord[]
   users: User[]
-  onDelete?: (lunchRecordId: LunchRecord['id']) => void
+  onDelete?: (lunchRecordId: LunchRecord) => void
 }
 
 export const UserLunchRecordsTable = ({
@@ -89,27 +90,9 @@ export const UserLunchRecordsTable = ({
         lunchRecord.payerId === user.id ? lunchRecord.consumerIds.length : -1,
       date: lunchRecord.date,
       description: lunchRecord.description,
+      lunchRecord,
     }
   })
-
-  const { modal } = App.useApp()
-
-  const handleDelete = async (lunchRecord: DataType) => {
-    const confirmed = await modal.confirm({
-      title: 'Delete confirmation',
-      content: (
-        <Typography>
-          Are you sure you want to delete lunch record{' '}
-          <strong>{lunchRecord.description}</strong> on{' '}
-          {formatDate(lunchRecord.date)}?
-        </Typography>
-      ),
-    })
-
-    if (confirmed) {
-      onDelete?.(lunchRecord.key)
-    }
-  }
 
   const columns = !onDelete
     ? DEFAULT_COLUMNS
@@ -118,10 +101,12 @@ export const UserLunchRecordsTable = ({
         {
           title: 'Actions',
           key: 'actions',
-          render: (_: unknown, record: DataType) =>
-            !record.archivedAt && (
-              <DeleteOutlined onClick={() => handleDelete(record)} />
-            ),
+          render: (_: unknown, record: DataType) => (
+            <DeleteOutlined
+              title="Delete"
+              onClick={() => onDelete(record.lunchRecord)}
+            />
+          ),
         },
       ]
 

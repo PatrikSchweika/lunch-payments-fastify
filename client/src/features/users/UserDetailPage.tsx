@@ -5,10 +5,11 @@ import {
   useUserLunchRecords,
 } from '../lunch-records/queries.ts'
 import { CenteredSpin } from '../../atoms/CenteredSpin.ts'
-import { useMemo } from 'react'
 import { UserLunchRecordsTable } from './UserLunchRecordsTable.tsx'
-import { Flex, Typography } from 'antd'
+import { App, Flex, Typography } from 'antd'
 import { useIsAdmin } from '../auth/queries.ts'
+import { formatDate } from '../../utils/format.ts'
+import type { LunchRecord } from 'contracts'
 
 export const UserDetailPage = () => {
   const { userId } = useParams()
@@ -25,19 +26,32 @@ interface UserPageInnerProps {
 }
 
 const UserPageInner = ({ userId }: UserPageInnerProps) => {
+  const { modal } = App.useApp()
+
   const { data: users, isPending } = useUsers('all')
   const { data: userLunchRecords } = useUserLunchRecords(userId)
 
   const isAdmin = useIsAdmin()
   const { mutate: deleteLunchRecord } = useDeleteLunchRecord()
 
-  const user = useMemo(() => {
-    if (!users) {
-      return null
-    }
+  const user = users?.find(user => user.id === userId)
 
-    return users.find(user => user.id === userId)
-  }, [users, userId])
+  const handleLunchRecordDelete = async (lunchRecord: LunchRecord) => {
+    const confirmed = await modal.confirm({
+      title: 'Delete confirmation',
+      content: (
+        <Typography>
+          Are you sure you want to delete lunch record{' '}
+          <strong>{lunchRecord.description}</strong> on{' '}
+          {formatDate(lunchRecord.date)}?
+        </Typography>
+      ),
+    })
+
+    if (confirmed) {
+      deleteLunchRecord(lunchRecord.id)
+    }
+  }
 
   if (!user && !isPending) {
     return <div>User {userId} not found</div>
@@ -55,7 +69,7 @@ const UserPageInner = ({ userId }: UserPageInnerProps) => {
             user={user}
             lunchRecords={userLunchRecords ?? []}
             users={users ?? []}
-            onDelete={isAdmin ? deleteLunchRecord : undefined}
+            onDelete={isAdmin ? handleLunchRecordDelete : undefined}
           />
         </Flex>
       )}
