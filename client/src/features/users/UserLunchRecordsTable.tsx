@@ -6,12 +6,9 @@ import dayjs from 'dayjs'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
 
 interface DataType {
-  key: number
-  payer: string
-  consumers: string
+  payer?: User
+  consumers: Array<User>
   score: number
-  date: string
-  description: string
 
   lunchRecord: LunchRecord
 }
@@ -23,7 +20,8 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
     responsive: ['xs'],
     render: (_, data) => (
       <Typography>
-        {data.payer} - {data.consumers}
+        {data.payer?.name ?? 'Unknown'} -{' '}
+        {data.consumers.map(user => user.name).join(', ')}
       </Typography>
     ),
   },
@@ -32,24 +30,27 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
     dataIndex: 'payer',
     key: 'payer',
     responsive: ['sm'],
+    render: (payer?: User) => payer?.name ?? 'Unknown',
   },
   {
     title: 'Consumers',
     dataIndex: 'consumers',
     key: 'consumers',
     responsive: ['sm'],
+    render: (consumers: User[]) => consumers.map(user => user.name).join(', '),
   },
   {
     title: 'Description',
-    dataIndex: 'description',
+    dataIndex: ['lunchRecord', 'description'],
     key: 'description',
   },
   {
     title: 'Date',
-    dataIndex: 'date',
+    dataIndex: ['lunchRecord', 'date'],
     key: 'date',
-    render: (_, data) => formatDate(data.date),
-    sorter: (a, b) => dayjs(a.date).diff(dayjs(b.date), 'day'),
+    render: (date: string) => formatDate(date),
+    sorter: (a, b) =>
+      dayjs(a.lunchRecord.date).diff(dayjs(b.lunchRecord.date), 'day'),
     defaultSortOrder: 'descend',
   },
   {
@@ -62,9 +63,52 @@ const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
 
 interface UserLunchRecordsTableProps {
   user: User
-  lunchRecords: LunchRecord[]
   users: User[]
+  lunchRecords: LunchRecord[]
   onDelete?: (lunchRecordId: LunchRecord) => void
+}
+
+const getColumns = (onDelete: UserLunchRecordsTableProps['onDelete']) => {
+  const columns = [...DEFAULT_COLUMNS]
+
+  if (onDelete) {
+    columns.push({
+      title: 'Actions',
+      key: 'actions',
+      render: (_: unknown, record: DataType) => (
+        <DeleteOutlined
+          title="Delete"
+          onClick={() => onDelete(record.lunchRecord)}
+        />
+      ),
+    })
+  }
+
+  return columns
+}
+
+const getDataSource = (
+  user: User,
+  users: User[],
+  lunchRecords: LunchRecord[],
+) => {
+  return lunchRecords.map(lunchRecord => {
+    const payer = users.find(user => user.id === lunchRecord.payerId)
+
+    const consumers = users.filter(user =>
+      lunchRecord.consumerIds.includes(user.id),
+    )
+
+    const score =
+      lunchRecord.payerId === user.id ? lunchRecord.consumerIds.length : -1
+
+    return {
+      payer,
+      consumers,
+      score,
+      lunchRecord,
+    }
+  })
 }
 
 export const UserLunchRecordsTable = ({
@@ -73,42 +117,9 @@ export const UserLunchRecordsTable = ({
   lunchRecords,
   onDelete,
 }: UserLunchRecordsTableProps) => {
-  const dataSource = lunchRecords.map(lunchRecord => {
-    const payer =
-      users.find(user => user.id === lunchRecord.payerId)?.name ?? 'Unknown'
+  const dataSource = getDataSource(user, users, lunchRecords)
 
-    const consumers = users
-      .filter(user => lunchRecord.consumerIds.includes(user.id))
-      .map(user => user.name)
-      .join(', ')
-
-    return {
-      key: lunchRecord.id,
-      payer,
-      consumers,
-      score:
-        lunchRecord.payerId === user.id ? lunchRecord.consumerIds.length : -1,
-      date: lunchRecord.date,
-      description: lunchRecord.description,
-      lunchRecord,
-    }
-  })
-
-  const columns = !onDelete
-    ? DEFAULT_COLUMNS
-    : [
-        ...DEFAULT_COLUMNS,
-        {
-          title: 'Actions',
-          key: 'actions',
-          render: (_: unknown, record: DataType) => (
-            <DeleteOutlined
-              title="Delete"
-              onClick={() => onDelete(record.lunchRecord)}
-            />
-          ),
-        },
-      ]
+  const columns = getColumns(onDelete)
 
   const breakpoints = useBreakpoint()
 
@@ -118,6 +129,7 @@ export const UserLunchRecordsTable = ({
       columns={columns}
       dataSource={dataSource}
       bordered
+      rowKey={record => record.lunchRecord.id}
       pagination={false}
     />
   )

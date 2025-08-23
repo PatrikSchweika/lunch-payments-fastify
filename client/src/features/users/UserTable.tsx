@@ -3,23 +3,16 @@ import { Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
 import { DeleteOutlined } from '@ant-design/icons'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
-import { useMemo } from 'react'
 import { formatDate } from '../../utils/format.ts'
 
-interface DataType {
-  key: number
-  name: string
-  score: number
-  archivedAt?: string
-  user: User
-}
-
-const DEFAULT_COLUMNS: TableProps<DataType>['columns'] = [
+const DEFAULT_COLUMNS: TableProps<User>['columns'] = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    render: (_, user) => <Link to={`/users/${user.key}`}>{user.name}</Link>,
+    render: (name: string, user) => (
+      <Link to={`/users/${user.id}`}>{name}</Link>
+    ),
     sorter: (a, b) => a.name.localeCompare(b.name),
   },
   {
@@ -37,47 +30,42 @@ interface UserTableProps {
   archivedUsers?: boolean
 }
 
+const getColumns = (
+  onArchive: UserTableProps['onArchive'],
+  archivedUsers: UserTableProps['archivedUsers'],
+): TableProps<User>['columns'] => {
+  const columns = [...DEFAULT_COLUMNS]
+
+  if (archivedUsers) {
+    columns.push({
+      title: 'Archived at',
+      dataIndex: 'archivedAt',
+      key: 'archivedAt',
+      render: (archivedAt?: string) =>
+        archivedAt ? formatDate(archivedAt) : '',
+    })
+  }
+
+  if (!archivedUsers && onArchive) {
+    columns.push({
+      title: 'Actions',
+      dataIndex: 'user',
+      key: 'actions',
+      render: (user: User) => (
+        <DeleteOutlined title="Archive" onClick={() => onArchive?.(user)} />
+      ),
+    })
+  }
+
+  return columns
+}
+
 export const UserTable = ({
   users,
   onArchive,
   archivedUsers,
 }: UserTableProps) => {
-  const dataSource = users.map(user => ({
-    key: user.id,
-    name: user.name,
-    score: user.score,
-    archivedAt: user.archivedAt,
-    user: user,
-  }))
-
-  const columns = useMemo(() => {
-    const cols = [...DEFAULT_COLUMNS]
-
-    if (archivedUsers) {
-      cols.push({
-        title: 'Archived at',
-        key: 'archivedAt',
-        render: (_: unknown, record: DataType) =>
-          record.archivedAt ? formatDate(record.archivedAt) : '',
-      })
-    }
-
-    if (!archivedUsers && onArchive) {
-      cols.push({
-        title: 'Actions',
-        key: 'actions',
-        render: (_: unknown, record: DataType) =>
-          !record.archivedAt && (
-            <DeleteOutlined
-              title="Archive"
-              onClick={() => onArchive?.(record.user)}
-            />
-          ),
-      })
-    }
-
-    return cols
-  }, [onArchive, archivedUsers])
+  const columns = getColumns(onArchive, archivedUsers)
 
   const breakpoints = useBreakpoint()
 
@@ -85,8 +73,9 @@ export const UserTable = ({
     <Table
       size={breakpoints['md'] ? 'large' : 'small'}
       columns={columns}
-      dataSource={dataSource}
+      dataSource={users}
       bordered
+      rowKey={user => user.id}
       pagination={false}
     />
   )
