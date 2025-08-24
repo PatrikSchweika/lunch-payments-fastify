@@ -2,7 +2,7 @@ import { Breadcrumb, Button, Flex, Layout, Typography } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
 import { useIsAdmin, useLogout } from './features/auth/queries.ts'
 import { HomeOutlined } from '@ant-design/icons'
-import { useQueryErrorNotificationEffect } from './features/use-query-error-notification-effect.tsx'
+import { useQueryErrorNotificationEffect } from './hooks/use-query-error-notification-effect.tsx'
 
 const HOME_BREADCRUMB_ITEM = {
   title: (
