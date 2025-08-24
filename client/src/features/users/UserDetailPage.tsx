@@ -43,7 +43,7 @@ const UserPageInner = ({ userId }: UserPageInnerProps) => {
         <Typography>
           Are you sure you want to delete lunch record{' '}
           <strong>{lunchRecord.description}</strong> on{' '}
-          {formatDate(lunchRecord.date)}?
+          <strong>{formatDate(lunchRecord.date)}</strong>?
         </Typography>
       ),
     })

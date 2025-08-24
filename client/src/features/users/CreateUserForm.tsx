@@ -5,7 +5,11 @@ import { Button, Form, Input, Typography } from 'antd'
 import { FormItem } from 'react-hook-form-antd'
 
 interface CreateUserFormProps {
-  onSubmit: (data: UserCreate) => void
+  onSubmit: (data: UserCreate) => Promise<void>
+}
+
+const DEFAULT_VALUES: Partial<UserCreate> = {
+  name: '',
 }
 
 export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
@@ -16,10 +20,11 @@ export const CreateUserForm = ({ onSubmit }: CreateUserFormProps) => {
     formState: { isSubmitting },
   } = useForm<UserCreate>({
     resolver: zodResolver(USER_CREATE_SCHEMA),
+    defaultValues: DEFAULT_VALUES,
   })
 
-  const onSubmitInner = (data: UserCreate) => {
-    onSubmit(data)
+  const onSubmitInner = async (data: UserCreate) => {
+    await onSubmit(data)
     reset()
   }
 

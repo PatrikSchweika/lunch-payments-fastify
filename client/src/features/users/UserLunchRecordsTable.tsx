@@ -74,12 +74,10 @@ const getColumns = (onDelete: UserLunchRecordsTableProps['onDelete']) => {
   if (onDelete) {
     columns.push({
       title: 'Actions',
+      dataIndex: 'lunchRecord',
       key: 'actions',
-      render: (_: unknown, record: DataType) => (
-        <DeleteOutlined
-          title="Delete"
-          onClick={() => onDelete(record.lunchRecord)}
-        />
+      render: (lunchRecord: LunchRecord) => (
+        <DeleteOutlined title="Delete" onClick={() => onDelete(lunchRecord)} />
       ),
     })
   }

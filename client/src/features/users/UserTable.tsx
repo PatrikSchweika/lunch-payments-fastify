@@ -49,9 +49,8 @@ const getColumns = (
   if (!archivedUsers && onArchive) {
     columns.push({
       title: 'Actions',
-      dataIndex: 'user',
       key: 'actions',
-      render: (user: User) => (
+      render: (_, user: User) => (
         <DeleteOutlined title="Archive" onClick={() => onArchive?.(user)} />
       ),
     })

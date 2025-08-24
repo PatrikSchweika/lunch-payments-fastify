@@ -13,7 +13,13 @@ import { DATE_FORMAT } from '../../utils/format.ts'
 
 interface AddLunchRecordFormProps {
   users: User[]
-  onSubmit: (data: LunchRecordCreate) => void
+  onSubmit: (data: LunchRecordCreate) => Promise<void>
+}
+
+const DEFAULT_VALUES: Partial<LunchRecordCreate> = {
+  date: dayjs().toISOString(),
+  consumerIds: [],
+  description: '',
 }
 
 export const AddLunchRecordForm = ({
@@ -30,15 +36,12 @@ export const AddLunchRecordForm = ({
     formState: { errors, isSubmitting },
   } = useForm<LunchRecordCreate>({
     resolver: zodResolver(LUNCH_RECORD_CREATE_SCHEMA),
-    defaultValues: {
-      date: dayjs().toISOString(),
-      consumerIds: [],
-    },
+    defaultValues: DEFAULT_VALUES,
   })
 
   const onSubmitInner = useCallback(
-    (data: LunchRecordCreate) => {
-      onSubmit(data)
+    async (data: LunchRecordCreate) => {
+      await onSubmit(data)
       reset()
     },
     [onSubmit, reset],
