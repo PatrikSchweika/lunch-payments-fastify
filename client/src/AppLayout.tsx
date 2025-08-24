@@ -2,6 +2,7 @@ import { Breadcrumb, Button, Flex, Layout, Typography } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
 import { useIsAdmin, useLogout } from './features/auth/queries.ts'
 import { HomeOutlined } from '@ant-design/icons'
+import { useQueryErrorNotificationEffect } from './features/use-query-error-notification-effect.tsx'
 
 const HOME_BREADCRUMB_ITEM = {
   title: (
@@ -34,6 +35,8 @@ export const AppLayout = () => {
   const breadCrumbItems = [HOME_BREADCRUMB_ITEM, ...routeBreadcrumbItems]
 
   const isAdmin = useIsAdmin()
+
+  useQueryErrorNotificationEffect()
 
   return (
     <Layout style={{ minHeight: '100vh', padding: '0' }}>
