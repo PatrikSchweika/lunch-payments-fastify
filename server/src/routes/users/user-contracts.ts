@@ -97,4 +97,23 @@ export const UserContracts = {
       summary: 'Archive user',
     },
   },
+
+  unarchiveUser: {
+    method: 'POST',
+    url: '/api/users/:id/unarchive',
+    schema: {
+      params: z.object({
+        id: z.coerce.number(),
+      }),
+      response: {
+        204: z.void(),
+        400: API_VALIDATION_ERROR_MESSAGE_SCHEMA,
+        401: API_ERROR_MESSAGE_SCHEMA,
+        403: API_ERROR_MESSAGE_SCHEMA,
+        404: API_ERROR_MESSAGE_SCHEMA,
+      },
+      tags: ['Users'],
+      summary: 'Unarchive user',
+    },
+  },
 } satisfies ApiContract

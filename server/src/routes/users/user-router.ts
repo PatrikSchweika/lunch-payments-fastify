@@ -143,5 +143,23 @@ export const userRouter: FastifyPluginCallbackZod = (fastify, _, done) => {
     },
   })
 
+  fastify.withTypeProvider<ZodTypeProvider>().route({
+    ...UserContracts.unarchiveUser,
+    onRequest: [fastify.basicAuth, requireRole(AuthUserRole.Admin)],
+    handler: async (request, reply) => {
+      const { id } = request.params
+
+      const user = await fastify.knex('users').where({ id }).first()
+
+      if (!user) {
+        return reply.notFound(`User with id ${id} not found.`)
+      }
+
+      await fastify.knex('users').update({ archivedAt: null }).where({ id })
+
+      return reply.code(204).send()
+    },
+  })
+
   done()
 }

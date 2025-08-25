@@ -18,6 +18,10 @@ const archiveUser = async (userId: User['id']) => {
   await API_CLIENT.delete(`api/users/${userId}`)
 }
 
+const unarchiveUser = async (userId: User['id']) => {
+  await API_CLIENT.post(`api/users/${userId}/unarchive`)
+}
+
 export const useUsers = (filter: UserFilter = 'all') =>
   useQuery({
     queryKey: ['users', filter],
@@ -38,6 +42,15 @@ export const useArchiveUser = () => {
 
   return useMutation({
     mutationFn: archiveUser,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
+  })
+}
+
+export const useUnarchiveUser = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: unarchiveUser,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   })
 }

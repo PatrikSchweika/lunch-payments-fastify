@@ -1,7 +1,12 @@
-import { useCreateUser, useArchiveUser, useUsers } from './users/queries.ts'
+import {
+  useCreateUser,
+  useArchiveUser,
+  useUsers,
+  useUnarchiveUser,
+} from './users/queries.ts'
 import { UserTable } from './users/UserTable.tsx'
 import { AddLunchRecordForm } from './lunch-records/AddLunchRecordForm.tsx'
-import { App, Col, Row, Space, Switch } from 'antd'
+import { App, Col, Row, Space, Switch, Typography } from 'antd'
 import { CenteredSpin } from '../atoms/CenteredSpin.ts'
 import { useCreateLunchRecord } from './lunch-records/queries.ts'
 import type { LunchRecordCreate, User, UserCreate } from 'contracts'
@@ -64,6 +69,7 @@ const AdminHomePage = () => {
   const [showActiveUsers, setShowActiveUsers] = useState(true)
 
   const { mutate: archiveUser } = useArchiveUser()
+  const { mutate: unarchiveUser } = useUnarchiveUser()
   const { mutateAsync: createUser } = useCreateUser()
 
   const handleLunchRecordSubmit = useLunchRecordSubmit()
@@ -71,12 +77,20 @@ const AdminHomePage = () => {
   const handleArchiveUser = async (user: User) => {
     const confirmed = await modal.confirm({
       title: 'Delete confirmation',
-      content: `Are you sure you want to archive ${user.name}?`,
+      content: (
+        <Typography>
+          Are you sure you want to archive <strong>{user.name}</strong>?
+        </Typography>
+      ),
     })
 
     if (confirmed) {
       archiveUser(user.id)
     }
+  }
+
+  const handleUnarchiveUser = (user: User) => {
+    unarchiveUser(user.id)
   }
 
   const handleCreateUser = async (data: UserCreate) => {
@@ -107,6 +121,7 @@ const AdminHomePage = () => {
             users={(showActiveUsers ? activeUsers : archivedUsers) ?? []}
             archivedUsers={!showActiveUsers}
             onArchive={handleArchiveUser}
+            onUnarchive={handleUnarchiveUser}
           />
         </Space>
       </Col>

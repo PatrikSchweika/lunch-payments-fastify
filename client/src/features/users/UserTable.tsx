@@ -1,7 +1,7 @@
 import type { User } from 'contracts'
 import { Table, type TableProps } from 'antd'
 import { Link } from 'react-router'
-import { DeleteOutlined } from '@ant-design/icons'
+import { DownloadOutlined, UploadOutlined } from '@ant-design/icons'
 import useBreakpoint from 'antd/es/grid/hooks/useBreakpoint'
 import { formatDate } from '../../utils/format.ts'
 
@@ -27,11 +27,13 @@ const DEFAULT_COLUMNS: TableProps<User>['columns'] = [
 interface UserTableProps {
   users: User[]
   onArchive?: (user: User) => void
+  onUnarchive?: (user: User) => void
   archivedUsers?: boolean
 }
 
 const getColumns = (
   onArchive: UserTableProps['onArchive'],
+  onUnarchive: UserTableProps['onUnarchive'],
   archivedUsers: UserTableProps['archivedUsers'],
 ): TableProps<User>['columns'] => {
   const columns = [...DEFAULT_COLUMNS]
@@ -51,7 +53,17 @@ const getColumns = (
       title: 'Actions',
       key: 'actions',
       render: (_, user: User) => (
-        <DeleteOutlined title="Archive" onClick={() => onArchive?.(user)} />
+        <DownloadOutlined title="Archive" onClick={() => onArchive(user)} />
+      ),
+    })
+  }
+
+  if (archivedUsers && onUnarchive) {
+    columns.push({
+      title: 'Actions',
+      key: 'actions',
+      render: (_, user: User) => (
+        <UploadOutlined title="Unarchive" onClick={() => onUnarchive(user)} />
       ),
     })
   }
@@ -62,9 +74,10 @@ const getColumns = (
 export const UserTable = ({
   users,
   onArchive,
+  onUnarchive,
   archivedUsers,
 }: UserTableProps) => {
-  const columns = getColumns(onArchive, archivedUsers)
+  const columns = getColumns(onArchive, onUnarchive, archivedUsers)
 
   const breakpoints = useBreakpoint()
 
