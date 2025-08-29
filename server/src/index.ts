@@ -59,11 +59,11 @@ if (app.appConfig.environment === Environment.Production) {
     wildcard: false,
   })
 
-  app.get('/*', (_, reply) => {
+  app.get('/*', { schema: { hide: true }}, (_, reply) => {
     return reply.sendFile('index.html')
   })
 } else {
-  app.get('/*', (request, reply) => {
+  app.get('/*', { schema: { hide: true }}, (request, reply) => {
     return reply.redirect(
       `${request.protocol}://${request.hostname}:5173${request.originalUrl}`,
     )
