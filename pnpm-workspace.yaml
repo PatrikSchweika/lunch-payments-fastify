@@ -7,4 +7,6 @@ onlyBuiltDependencies:
 syncInjectedDepsAfterScripts:
   - build
 injectWorkspacePackages: true
-
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
